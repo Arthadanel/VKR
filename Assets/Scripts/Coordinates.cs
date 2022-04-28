@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEngine;
 
 public struct Coordinates
 {
@@ -29,5 +30,15 @@ public struct Coordinates
                 result = true;
         }
         return result;
+    }
+
+    public Vector3 GetVector3(int z=0)
+    {
+        return new Vector3(Row, Column, z);
+    }
+
+    public override string ToString()
+    {
+        return "row: " + Row + "\tcolumn: " + Column;
     }
 }
