@@ -7,28 +7,15 @@ public class WorldMapVisualisation : MonoBehaviour
     public void DrawPolygon(List<Point> points)
     { 
         Vector2[] vertices2D = SortPointsPolygon(points);
-        Debug.Log(vertices2D.Length);
-        Vector3[] vertices3D = new Vector3[points.Count];
-        int[] triangles = new int[points.Count-2];
+        int verticesCount = vertices2D.Length;
+        int[] triangles = GetTriangles(verticesCount);
+        
+        Vector3[] vertices3D = new Vector3[verticesCount];
         int Z = 0;
 
-        
-        for (int i = 0; i < points.Count; i++)
+        for (int i = 0; i < verticesCount; i++)
         {
-            int x = points[i].X;
-            int y = points[i].Y;
-            int z = Z;
-            vertices3D[i] = new Vector3(x,y,z);
-            vertices2D[i] = new Vector2(x,y);
-        }
-
-        int t = 0;
-        for (int i = 0; i < triangles.Length; i+=2)
-        {
-            triangles[i] = t;
-            triangles[i+1] = t+1;
-            triangles[i+2] = t+2;
-            t+=2;
+            vertices3D[i] = new Vector3(vertices2D[i].x,vertices2D[i].y, Z);
         }
         
         //Create Mesh
@@ -37,6 +24,45 @@ public class WorldMapVisualisation : MonoBehaviour
         mesh.vertices = vertices3D;
         mesh.uv = vertices2D;
         mesh.triangles = triangles;
+        
+        AddCollider(vertices2D);
+    }
+
+    private void AddCollider(Vector2[] vertices2D)
+    {
+        PolygonCollider2D collider = gameObject.GetComponent<PolygonCollider2D>();
+        collider.points = vertices2D;
+    }
+
+    private int[] GetTriangles(int verticesCount)
+    {
+        int[] triangles = new int[(verticesCount - 2) * 3];
+        Debug.Log(verticesCount);
+        int t = 0;
+        int i = 0;
+        while (t+2<verticesCount)
+        {
+            Debug.Log(t);
+            triangles[i] = t;
+            triangles[i+1] = t+1;
+            triangles[i+2] = t+2;
+            t+=2;
+            Debug.Log(triangles[i] + " " + triangles[i + 1] + " " + triangles[i + 2]);
+            i += 3;
+        }
+
+        int j = 3;
+        while (i < triangles.Length)
+        {
+            triangles[i] = 0;
+            triangles[i+1] = triangles[j];
+            j+=3;
+            triangles[i+2] = j==i? verticesCount-1: triangles[j];
+            Debug.Log(triangles[i] + " " + triangles[i + 1] + " " + triangles[i + 2]);
+            i += 3;
+        }
+
+        return triangles;
     }
 
     private Vector2[] SortPointsPolygon(List<Point> points)
@@ -102,18 +128,6 @@ public class WorldMapVisualisation : MonoBehaviour
             Debug.Log(lastPoint);
             v++;
             points.RemoveAt(p);
-            // if (points[p].X <= result[v].x && points[p].Y <= result[v].y)
-            // {
-            //     Debug.Log(points.Count);
-            //     lastPoint = points[p];
-            //     result[v] = new Vector2(lastPoint.X,lastPoint.Y);
-            //     Debug.Log(lastPoint);
-            //     v++;
-            //     points.RemoveAt(p);
-            //     p = 0;
-            // }
-            // else
-            //     p++;
         }
 
         return result;
@@ -152,16 +166,6 @@ public class WorldMapVisualisation : MonoBehaviour
         {
             points.Add(new Point(Random.Range(0,5),Random.Range(0,5)));
         }
-        points = points.Distinct().ToList();
-        points.Sort();
-        foreach (Point point in points)
-        {
-            Debug.Log(point);
-        }
-        // points.Add(new Point(0,0));
-        // points.Add(new Point(0,1));
-        // points.Add(new Point(1,1));
-        // points.Add(new Point(1,0));
         
         DrawPolygon(points);
     }

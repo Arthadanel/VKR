@@ -36,7 +36,6 @@ public class CameraController:MonoBehaviour
     private void MouseMove()
     {
         Vector3 mousePosition = _camera.ScreenToViewportPoint(Input.mousePosition);
-        Debug.Log(_camera.ScreenToViewportPoint(Input.mousePosition));
         
         float x = mousePosition.x;
         float y = mousePosition.y;
