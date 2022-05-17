@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Utility;
 
 public class WorldMapVisualisation : MonoBehaviour
 {
     public void DrawPolygon(List<Point> points)
     { 
-        Vector2[] vertices2D = SortPointsPolygon(points);
+        Vector2[] vertices2D = SortPointsClockwise(points);
         int verticesCount = vertices2D.Length;
         int[] triangles = GetTriangles(verticesCount);
         
@@ -30,8 +31,8 @@ public class WorldMapVisualisation : MonoBehaviour
 
     private void AddCollider(Vector2[] vertices2D)
     {
-        PolygonCollider2D collider = gameObject.GetComponent<PolygonCollider2D>();
-        collider.points = vertices2D;
+        PolygonCollider2D polygonCollider = gameObject.GetComponent<PolygonCollider2D>();
+        polygonCollider.points = vertices2D;
     }
 
     private int[] GetTriangles(int verticesCount)
@@ -65,7 +66,7 @@ public class WorldMapVisualisation : MonoBehaviour
         return triangles;
     }
 
-    private Vector2[] SortPointsPolygon(List<Point> points)
+    private Vector2[] SortPointsClockwise(List<Point> points)
     {
         Debug.Log("===================");
         points = points.Distinct().ToList();

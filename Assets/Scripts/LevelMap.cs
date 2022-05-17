@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Units;
 using UnityEngine;
+using Utility;
 
 public class LevelMap : MonoBehaviour
 {
@@ -22,10 +23,13 @@ public class LevelMap : MonoBehaviour
 
     public static int CURRENT_LEVEL = 1;
     private List<Tile> _map;
-
-    public void SetOuterLayout(List<Tile> tilesEmptyDivider)
+    
+    public void SetBasicLayout(List<Point> anchorPoints)
     {
-
+        for (int i = 0; i < anchorPoints.Count; i++)
+        {
+            
+        }
     }
 
     public void GenerateInnerLayout()
