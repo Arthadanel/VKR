@@ -40,11 +40,7 @@ public class WorldMapGenerator : MonoBehaviour
             Debug.Log(p);
         }
         
-        //{ (0,0), (0, 2 * maxY), (2 * maxX, 0) }
-        //create outer triangle and add it to the triangulation
         List<Triangle> triangles = new List<Triangle>();
-        // Triangle outline = new Triangle(new Point(2 * xMin, 2 * yMin), new Point(2 * xMin, 2 * yMax),
-        //     new Point(2 * xMax, 2 * yMin));
         Triangle outline = new Triangle(
             new Point(0, 0),
             new Point(0, GameSettings.LIMIT_VALUE),
@@ -84,15 +80,8 @@ public class WorldMapGenerator : MonoBehaviour
         List<Triangle> badTriangles = new List<Triangle>();
         List<Edge> polygonHole = new List<Edge>();
         FindInvalidatedTriangles(ref triangles, newPoint, ref badTriangles, ref polygonHole);
-        Debug.Log("======================");
-        Debug.Log("_T: "+triangles.Count);
-        Debug.Log("BT: "+badTriangles.Count);
-        Debug.Log("_P: "+polygonHole.Count);
         RemoveBadTrianglesFromTriangulation(ref triangles,ref badTriangles);
-        Debug.Log("GT: "+triangles.Count);
         FillInPolygonHole(ref triangles, newPoint, ref polygonHole);
-        Debug.Log("_T: "+triangles.Count);
-        Debug.Log("======================");
     }
 
     private void FindInvalidatedTriangles(ref List<Triangle> triangles, Point newPoint, ref List<Triangle> badTriangles,
@@ -130,7 +119,6 @@ public class WorldMapGenerator : MonoBehaviour
     {
         foreach (var edge in polygonHole)
         {
-            Debug.Log(edge);
             Edge tmp1 = new Edge(edge.P1, newPoint);
             Edge tmp2 = new Edge(edge.P2, newPoint);
             Triangle newTriangle = new Triangle(edge,tmp1,tmp2);

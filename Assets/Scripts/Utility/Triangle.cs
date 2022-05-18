@@ -136,8 +136,6 @@ namespace Utility
             }
             result.Sort();
             result = result.Distinct().ToList();
-            //DEBUG
-            //Debug.Log(result.Count+ " points in triangle");
             SortPointsCounterClockwise(result);
             return result;
         }
@@ -189,20 +187,5 @@ namespace Utility
             }
             return result;
         }
-
-        // public int CompareTo(object obj)
-        // {
-        //     if (obj == null) throw new NullReferenceException();
-        //     Triangle other = obj as Triangle;
-        //     if (other == null) throw new InvalidCastException();
-        //     Edges.Sort();
-        //     int result = 0;
-        //     for (int i = 0; i < Edges.Count; i++)
-        //     {
-        //         result = Edges[i].CompareTo(Edges[i]);
-        //         if ())
-        //             return 1;
-        //     }
-        // }
     }
 }
