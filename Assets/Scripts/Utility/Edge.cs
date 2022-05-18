@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Utility
 {
@@ -7,7 +8,7 @@ namespace Utility
     {
         public readonly Point P1;
         public readonly Point P2;
-        public List<Triangle> AdjacentTriangles = new List<Triangle>();
+        private List<Triangle> _adjacentTriangles = new List<Triangle>();
         
 
         public Edge(Point p1, Point p2)
@@ -22,6 +23,30 @@ namespace Utility
                 P1 = p1;
                 P2 = p2;
             }
+        }
+
+        public void AddAdjacentTriangle(Triangle triangle)
+        {
+            if(!_adjacentTriangles.Contains(triangle))
+                _adjacentTriangles.Add(triangle);
+        }
+        
+        public void RemoveAdjacentTriangle(Triangle triangle)
+        {
+            while (_adjacentTriangles.Contains(triangle))
+            {
+                _adjacentTriangles.Remove(triangle);
+            }
+        }
+
+        public int GetAdjacentTriangleCount()
+        {
+            return _adjacentTriangles.Count;
+        }
+
+        public List<Triangle> GetAdjacentTriangles()
+        {
+            return _adjacentTriangles;
         }
 
         //check if point belongs to the edge

@@ -9,6 +9,8 @@ namespace Utility
     {
         public readonly List<Edge> Edges;
         public readonly List<Point> Points;
+        public readonly Point Circumcenter;
+        public readonly float SqrRadius;
 
         public Triangle(Edge edge1, Edge edge2, Edge edge3)
         {
@@ -22,16 +24,17 @@ namespace Utility
             Points = GetPoints();
             foreach (var edge in Edges)
             {
-                if(!edge.AdjacentTriangles.Contains(this))
-                    edge.AdjacentTriangles.Add(this);
+                edge.AddAdjacentTriangle(this);
             }
+            Circumcenter = GetCircumcenter();
+            SqrRadius = Circumcenter.SqrDistance(Points[0]);
         }
 
         public Triangle(Point a, Point b, Point c)
         {
             Edge edge1 = new Edge(a,b);
             Edge edge2 = new Edge(b,c);
-            Edge edge3 = new Edge(b,a);
+            Edge edge3 = new Edge(c,a);
             Edges = new List<Edge>
             {
                 edge1,
@@ -42,12 +45,13 @@ namespace Utility
             Points = GetPoints();
             foreach (var edge in Edges)
             {
-                if(!edge.AdjacentTriangles.Contains(this))
-                    edge.AdjacentTriangles.Add(this);
+                edge.AddAdjacentTriangle(this);
             }
+            Circumcenter = GetCircumcenter();
+            SqrRadius = Circumcenter.SqrDistance(Points[0]);
         }
 
-        public Point GetCircumcenter()
+        private Point GetCircumcenter()
         {
             float x1 = Points[0].X;
             float y1 = Points[0].Y;
@@ -97,7 +101,12 @@ namespace Utility
             return closest;
         }
 
-        public bool CircumcircleContainsPoint(Point newPoint)
+        public bool PointWithinCircumcircle(Point point)
+        {
+            return Circumcenter.SqrDistance(point) <= SqrRadius;
+        }
+
+        private bool CircumcircleContainsPoint(Point newPoint)
         {
             
             /*
@@ -123,7 +132,14 @@ namespace Utility
             float det = (x1 * x1 + y1 * y1) * (x2 * y3 - x3 * y2) - (x2 * x2 + y2 * y2) * (x1 * y3 - x3 * y1) +
                         (x3 * x3 + y3 * y3) * (x1 * y2 - x2 * y1);
 
-            return det >= 0; //inside circumcircle
+            // if (ToString() == "|{X=0,Y=25}|{X=10,Y=4}|{X=7,Y=11}|" ||
+            //     ToString() == "|{X=7,Y=11}|{X=9,Y=11}|{X=25,Y=25}|")
+            // {
+            //     Debug.Log("Triangle DET: " + det);
+            //     Debug.Log(this);
+            // }
+
+            return det > 0; //inside circumcircle
         }
 
         private List<Point> GetPoints()
