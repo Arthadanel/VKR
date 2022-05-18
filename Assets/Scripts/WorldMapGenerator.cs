@@ -19,25 +19,16 @@ public class WorldMapGenerator : MonoBehaviour
         //Generate anchor points
         List<Point> points = new List<Point>();
         int pointCount = PointCount; //Random.Range(GameSettings.LEVEL_COUNT_MIN, GameSettings.LEVEL_COUNT_MAX + 1);
-        int xMax = Int32.MinValue;
-        int yMax = Int32.MinValue;
-        int xMin = Int32.MaxValue;
-        int yMin = Int32.MaxValue;
         for (int i = 0; i < pointCount; i++)
         {
-            int x = Random.Range(0, 10);
-            int y = Random.Range(0, 10);
+            int x = Random.Range(0, GameSettings.MAX_XY);
+            int y = Random.Range(0, GameSettings.MAX_XY);
             Point point = new Point(x, y);
             if (points.Contains(point))
             {
                 i--;
                 continue;
             }
-
-            if (x > xMax) xMax = x;
-            if (y > yMax) yMax = y;
-            if (x < xMin) xMin = x;
-            if (y < yMin) yMin = y;
             
             points.Add(point);
         }
@@ -52,13 +43,13 @@ public class WorldMapGenerator : MonoBehaviour
         //{ (0,0), (0, 2 * maxY), (2 * maxX, 0) }
         //create outer triangle and add it to the triangulation
         List<Triangle> triangles = new List<Triangle>();
-        Triangle outline = new Triangle(new Point(2 * xMin, 2 * yMin), new Point(2 * xMin, 2 * yMax),
-            new Point(2 * xMax, 2 * yMin));
-        Triangle tmp = new Triangle(
+        // Triangle outline = new Triangle(new Point(2 * xMin, 2 * yMin), new Point(2 * xMin, 2 * yMax),
+        //     new Point(2 * xMax, 2 * yMin));
+        Triangle outline = new Triangle(
             new Point(0, 0),
             new Point(0, GameSettings.LIMIT_VALUE),
             new Point(GameSettings.LIMIT_VALUE, GameSettings.LIMIT_VALUE));
-        triangles.Add(tmp);
+        triangles.Add(outline);
         
         foreach (var p in points)
         {
@@ -71,8 +62,6 @@ public class WorldMapGenerator : MonoBehaviour
             Debug.Log(triangle);
         }
 
-        triangles = triangles.Distinct().ToList();
-        Debug.Log(triangles.Count);
         VoronoiDiagramConversion(triangles);
 
     }
@@ -94,59 +83,59 @@ public class WorldMapGenerator : MonoBehaviour
     {
         List<Triangle> badTriangles = new List<Triangle>();
         List<Edge> polygonHole = new List<Edge>();
-        FindInvalidatedTriangles(triangles, newPoint, badTriangles, polygonHole);
-        RemoveDuplicateEdgesFromPolygonHole(polygonHole);
-        RemoveBadTrianglesFromTriangulation(triangles, badTriangles);
-        FillInPolygonHole(triangles, newPoint, polygonHole);
+        FindInvalidatedTriangles(ref triangles, newPoint, ref badTriangles, ref polygonHole);
         Debug.Log("======================");
-        Debug.Log(newPoint);
-        foreach (var triangle in triangles)
-        {
-            Debug.Log(triangle);
-        }
+        Debug.Log("_T: "+triangles.Count);
+        Debug.Log("BT: "+badTriangles.Count);
+        Debug.Log("_P: "+polygonHole.Count);
+        RemoveBadTrianglesFromTriangulation(ref triangles,ref badTriangles);
+        Debug.Log("GT: "+triangles.Count);
+        FillInPolygonHole(ref triangles, newPoint, ref polygonHole);
+        Debug.Log("_T: "+triangles.Count);
+        Debug.Log("======================");
     }
 
-    private void FindInvalidatedTriangles(List<Triangle> triangles, Point newPoint, List<Triangle> badTriangles, List<Edge> polygonHole)
+    private void FindInvalidatedTriangles(ref List<Triangle> triangles, Point newPoint, ref List<Triangle> badTriangles,
+        ref List<Edge> polygonHole)
     {
         foreach (var triangle in triangles)
         {
-            if (triangle.CircumcircleContainsPoint(newPoint))
+            if (!triangle.CircumcircleContainsPoint(newPoint))
+                continue;
+
+            if(triangle.PointInsideTriangle(newPoint))
             {
                 badTriangles.Add(triangle);
                 foreach (var edge in triangle.Edges)
                 {
-                    polygonHole.Add(edge);
+                    if (!polygonHole.Contains(edge))
+                        polygonHole.Add(edge);
                 }
+                continue;
             }
+            
+            polygonHole.Add(triangle.ClosestEdge(newPoint));
         }
     }
 
-    private void RemoveDuplicateEdgesFromPolygonHole(List<Edge> polygonHole)
+    private void RemoveBadTrianglesFromTriangulation(ref List<Triangle> triangles, ref List<Triangle> badTriangles)
     {
-        polygonHole.Sort();
-        for (int i = 1; i < polygonHole.Count; i++)
+        foreach (var badTriangle in badTriangles)
         {
-            if(polygonHole[i-1]==polygonHole[i])
-                polygonHole.RemoveAt(--i);
+            triangles.Remove(badTriangle);
         }//NOT TESTED
     }
 
-    private void RemoveBadTrianglesFromTriangulation(List<Triangle> triangles, List<Triangle> badTriangles)
-    {
-        foreach (var triangle in badTriangles)
-        {
-            triangles.Remove(triangle);
-        }//NOT TESTED
-    }
-
-    private void FillInPolygonHole(List<Triangle> triangles, Point newPoint, List<Edge> polygonHole)
+    private void FillInPolygonHole(ref List<Triangle> triangles, Point newPoint, ref List<Edge> polygonHole)
     {
         foreach (var edge in polygonHole)
         {
+            Debug.Log(edge);
             Edge tmp1 = new Edge(edge.P1, newPoint);
             Edge tmp2 = new Edge(edge.P2, newPoint);
             Triangle newTriangle = new Triangle(edge,tmp1,tmp2);
-            triangles.Add(newTriangle);
+            if (!triangles.Contains(newTriangle))
+                triangles.Add(newTriangle);
         }//NOT TESTED
     }
 

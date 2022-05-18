@@ -18,13 +18,13 @@ namespace Utility
                 edge2,
                 edge3
             };
+            Edges.Sort();
+            Points = GetPoints();
             foreach (var edge in Edges)
             {
                 if(!edge.AdjacentTriangles.Contains(this))
                     edge.AdjacentTriangles.Add(this);
             }
-
-            Points = GetPoints();
         }
 
         public Triangle(Point a, Point b, Point c)
@@ -38,12 +38,13 @@ namespace Utility
                 edge2,
                 edge3
             };
+            Edges.Sort();
+            Points = GetPoints();
             foreach (var edge in Edges)
             {
                 if(!edge.AdjacentTriangles.Contains(this))
                     edge.AdjacentTriangles.Add(this);
             }
-            Points = GetPoints();
         }
 
         public Point GetCircumcenter()
@@ -65,6 +66,35 @@ namespace Utility
             
             Point circumcenter = new Point(x,y);
             return circumcenter;
+        }
+        
+        private float sign (Point p1, Point p2, Point p3)
+        {
+            return (p1.X - p3.X) * (p2.Y - p3.Y) - (p2.X - p3.X) * (p1.Y - p3.Y);
+        }
+
+        public bool PointInsideTriangle (Point point)
+        {
+            var d1 = sign(point, Points[0], Points[1]);
+            var d2 = sign(point, Points[1], Points[2]);
+            var d3 = sign(point, Points[2], Points[0]);
+
+            var hasNegative = (d1 < 0) || (d2 < 0) || (d3 < 0);
+            var hasPositive = (d1 > 0) || (d2 > 0) || (d3 > 0);
+
+            return !(hasNegative && hasPositive);
+        }
+
+        public Edge ClosestEdge(Point point)
+        {
+            Edge closest = Edges[0];
+            foreach (var edge in Edges)
+            {
+                if (edge.SumSqrDistanceToVertices(point) < closest.SumSqrDistanceToVertices(point))
+                    closest = edge;
+            }
+
+            return closest;
         }
 
         public bool CircumcircleContainsPoint(Point newPoint)
@@ -93,7 +123,7 @@ namespace Utility
             float det = (x1 * x1 + y1 * y1) * (x2 * y3 - x3 * y2) - (x2 * x2 + y2 * y2) * (x1 * y3 - x3 * y1) +
                         (x3 * x3 + y3 * y3) * (x1 * y2 - x2 * y1);
 
-            return det >= -0.0001; //inside circumcircle
+            return det >= 0; //inside circumcircle
         }
 
         private List<Point> GetPoints()
@@ -124,24 +154,21 @@ namespace Utility
 
         public override bool Equals(object obj)
         {
-            if (obj == null) return false;
+            if (obj is null) return false;
             Triangle other = obj as Triangle;
-            if (other == null) return false;
+            if (other is null) return false;
             return Equals(other);
         }
 
         protected bool Equals(Triangle other)
         {
-            // int similarities = 0;
-            // foreach (var edge in Edges)
-            // {
-            //     if (other.Edges.Contains(edge))
-            //         similarities++;
-            // }
-            //
-            // Debug.Log("similarities: " + similarities);
-            // return similarities == 3;
-            return this.ToString() == other.ToString();
+            for (int i = 0; i < 3; i++)
+            {
+                if (!Points[i].Equals(other.Points[i]))
+                    return false;
+            }
+
+            return true;
         }
 
         public override int GetHashCode()
@@ -156,8 +183,7 @@ namespace Utility
             // {
             //     result += edge.ToString() + '|';
             // }
-            List<Point> points = GetPoints();
-            foreach (var point in points)
+            foreach (var point in Points)
             {
                 result += point.ToString() + '|';
             }

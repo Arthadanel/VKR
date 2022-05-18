@@ -12,7 +12,7 @@ namespace Utility
 
         public Edge(Point p1, Point p2)
         {
-            if (p1.CompareTo(p2) >= 0)
+            if (p1.CompareTo(p2) > 0)
             {
                 P1 = p2;
                 P2 = p1;
@@ -48,17 +48,22 @@ namespace Utility
             return result;
         }
 
+        public float SumSqrDistanceToVertices(Point point)
+        {
+            return P1.SqrDistance(point) + P2.SqrDistance(point);
+        }
+
         public override bool Equals(object obj)
         {
             if (obj == null) return false;
-            Triangle other = obj as Triangle;
+            Edge other = obj as Edge;
             if (other == null) return false;
             return Equals(other);
         }
 
         protected bool Equals(Edge other)
         {
-            return Equals(P1, other.P1) && Equals(P2, other.P2);
+            return P1.Equals(other.P1) && P2.Equals(other.P2);
         }
 
         public override int GetHashCode()
@@ -73,12 +78,12 @@ namespace Utility
         public int CompareTo(object obj)
         {
             Edge other = (Edge) obj;
-            return P1.CompareTo(other.P1) == 0 ? P1.CompareTo(other.P1) : P2.CompareTo(other.P2);
+            return P1.Equals(other.P1) ? P2.CompareTo(other.P2) : P1.CompareTo(other.P1);
         }//NOT TESTED
 
         public override string ToString()
         {
-            return P1.ToString() + "->" + P2.ToString();
+            return P1 + "->" + P2;
         }
     }
 }

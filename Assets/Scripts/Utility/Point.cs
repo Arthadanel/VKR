@@ -18,17 +18,15 @@ namespace Utility
             Y = y;
         }
 
+        public float SqrDistance(Point other)
+        {
+            return (X - other.X) * (X - other.X) + (Y - other.Y) * (Y - other.Y);
+        }
+
         public int CompareTo(object obj)
         {
             Point other = (Point) obj;
-            int result = 1;
-        
-            if (other.X > this.X) result = -1;
-            else if (other.X > this.X) result = -1;
-        
-            if (Equals(this, other)) result = 0;
-        
-            return result;
+            return X.Equals(other.X) ? Y.CompareTo(other.Y) : X.CompareTo(other.X);
         }
 
         public override bool Equals(object obj)
