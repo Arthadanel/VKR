@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Utility
 {
-    public class Edge:IComparable
+    public class Edge:IComparable, IEquatable<Edge>
     {
         public readonly Point P1;
         public readonly Point P2;
@@ -25,18 +25,16 @@ namespace Utility
             }
         }
 
+        public Edge(Edge edge)
+        {
+            P1 = edge.P1;
+            P2 = edge.P2;
+        }
+
         public void AddAdjacentTriangle(Triangle triangle)
         {
             if(!_adjacentTriangles.Contains(triangle))
                 _adjacentTriangles.Add(triangle);
-        }
-        
-        public void RemoveAdjacentTriangle(Triangle triangle)
-        {
-            while (_adjacentTriangles.Contains(triangle))
-            {
-                _adjacentTriangles.Remove(triangle);
-            }
         }
 
         public int GetAdjacentTriangleCount()
@@ -86,17 +84,17 @@ namespace Utility
             return Equals(other);
         }
 
-        protected bool Equals(Edge other)
-        {
-            return P1.Equals(other.P1) && P2.Equals(other.P2);
-        }
-
         public override int GetHashCode()
         {
             unchecked
             {
                 return ((P1 != null ? P1.GetHashCode() : 0) * 397) ^ (P2 != null ? P2.GetHashCode() : 0);
             }
+        }
+
+        public bool Equals(Edge other)
+        {
+            return other != null && P1.Equals(other.P1) && P2.Equals(other.P2);
         }
 
         //for sorting the edges by first point x-coordinate

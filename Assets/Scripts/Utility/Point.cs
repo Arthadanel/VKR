@@ -2,7 +2,7 @@
 
 namespace Utility
 {
-    public class Point:IComparable
+    public class Point:IComparable, IEquatable<Point>
     {
         public readonly float X;
         public readonly float Y;
@@ -45,9 +45,9 @@ namespace Utility
             }
         }
 
-        protected bool Equals(Point other)
+        public bool Equals(Point other)
         {
-            return Math.Abs(X - other.X) < 0.0001 && Math.Abs(Y - other.Y) < 0.0001;
+            return other != null && Math.Abs(X - other.X) < 0.0001 && Math.Abs(Y - other.Y) < 0.0001;
         }
 
         public override string ToString()

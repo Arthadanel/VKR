@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Utility
 {
-    public class Triangle
+    public class Triangle : IEquatable<Triangle>
     {
         public readonly List<Edge> Edges;
         public readonly List<Point> Points;
@@ -22,10 +22,6 @@ namespace Utility
             };
             Edges.Sort();
             Points = GetPoints();
-            foreach (var edge in Edges)
-            {
-                edge.AddAdjacentTriangle(this);
-            }
             Circumcenter = GetCircumcenter();
             SqrRadius = Circumcenter.SqrDistance(Points[0]);
         }
@@ -43,12 +39,8 @@ namespace Utility
             };
             Edges.Sort();
             Points = GetPoints();
-            foreach (var edge in Edges)
-            {
-                edge.AddAdjacentTriangle(this);
-            }
-            Circumcenter = GetCircumcenter();
-            SqrRadius = Circumcenter.SqrDistance(Points[0]);
+            //Circumcenter = GetCircumcenter();
+            //SqrRadius = Circumcenter.SqrDistance(Points[0]);
         }
 
         private Point GetCircumcenter()
@@ -103,7 +95,7 @@ namespace Utility
 
         public bool PointWithinCircumcircle(Point point)
         {
-            return Circumcenter.SqrDistance(point) <= SqrRadius;
+            return CircumcircleContainsPoint(point); //Circumcenter.SqrDistance(point) <= SqrRadius;
         }
 
         private bool CircumcircleContainsPoint(Point newPoint)
@@ -174,20 +166,21 @@ namespace Utility
             return Equals(other);
         }
 
-        protected bool Equals(Triangle other)
+        public override int GetHashCode()
         {
-            for (int i = 0; i < 3; i++)
+            return (Points != null ? Points.GetHashCode() : 0);
+        }
+
+        public bool Equals(Triangle other)
+        {
+            foreach (var point in Points)
             {
-                if (!Points[i].Equals(other.Points[i]))
-                    return false;
+                if (other != null && other.Points.Contains(point))
+                    continue;
+                return false;
             }
 
             return true;
-        }
-
-        public override int GetHashCode()
-        {
-            return (Edges != null ? Edges.GetHashCode() : 0);
         }
 
         public override string ToString()

@@ -3,11 +3,11 @@ using System.Linq;
 using UnityEngine;
 using Utility;
 
-public class WorldMapVisualisation : MonoBehaviour
+public class WorldMapVisualisation
 {
-    public void DrawPolygon(List<Point> points)
+    public static void DrawPolygon(List<Point> points, GameObject anchor)
     { 
-        Vector2[] vertices2D = SortPointsClockwise(points);
+        Vector2[] vertices2D = GetConvexHull(points);
         int verticesCount = vertices2D.Length;
         int[] triangles = GetTriangles(verticesCount);
         
@@ -21,34 +21,37 @@ public class WorldMapVisualisation : MonoBehaviour
         
         //Create Mesh
         Mesh mesh = new Mesh();
-        GetComponent<MeshFilter>().mesh = mesh;
+        anchor.GetComponent<MeshFilter>().mesh = mesh;
         mesh.vertices = vertices3D;
         mesh.uv = vertices2D;
         mesh.triangles = triangles;
-        
-        AddCollider(vertices2D);
-    }
-
-    private void AddCollider(Vector2[] vertices2D)
-    {
-        PolygonCollider2D polygonCollider = gameObject.GetComponent<PolygonCollider2D>();
+        SetMeshColor(Random.ColorHSV(),mesh);
+        //Set up collider
+        PolygonCollider2D polygonCollider = anchor.GetComponent<PolygonCollider2D>();
         polygonCollider.points = vertices2D;
     }
 
-    private int[] GetTriangles(int verticesCount)
+    private static void SetMeshColor(Color color, Mesh mesh)
+    {
+        Color32[] colors = new Color32[mesh.vertexCount];
+        for (int i = 0; i < colors.Length; i++)
+        {
+            colors[i] = color;
+        }
+        mesh.SetColors(colors);
+    }
+
+    private static int[] GetTriangles(int verticesCount)
     {
         int[] triangles = new int[(verticesCount - 2) * 3];
-        Debug.Log(verticesCount);
         int t = 0;
         int i = 0;
         while (t+2<verticesCount)
         {
-            Debug.Log(t);
             triangles[i] = t;
             triangles[i+1] = t+1;
             triangles[i+2] = t+2;
             t+=2;
-            Debug.Log(triangles[i] + " " + triangles[i + 1] + " " + triangles[i + 2]);
             i += 3;
         }
 
@@ -59,33 +62,36 @@ public class WorldMapVisualisation : MonoBehaviour
             triangles[i+1] = triangles[j];
             j+=3;
             triangles[i+2] = j==i? verticesCount-1: triangles[j];
-            Debug.Log(triangles[i] + " " + triangles[i + 1] + " " + triangles[i + 2]);
             i += 3;
         }
 
         return triangles;
     }
 
-    private Vector2[] SortPointsClockwise(List<Point> points)
+    private static Vector2[] GetConvexHull(List<Point> points)
     {
-        Debug.Log("===================");
-        points = points.Distinct().ToList();
+        int vertexCount = points.Count;
+        Vector2[] result = new Vector2[vertexCount];
+        if (points.Count == 3)
+        {
+            for (int i = 0; i < vertexCount; i++)
+            {
+                result[i] = new Vector2(points[i].X, points[i].Y);
+            }
+            return result;
+        }
+        
+        //choked at least once, probably needs revision
+        
         points.Sort();
-        int size = points.Count;
-        Vector2[] result = new Vector2[size];
         Point maxYPoint = GetMaxYPoint(points);
         Point maxXPoint = GetMaxXPoint(points);
-        Debug.Log(maxYPoint);
-        Debug.Log(maxXPoint);
-        Debug.Log("===================");
+        
         int v = 0;
         int p = 0;
         Point lastPoint=points[p];
-        
         result[v] = new Vector2(lastPoint.X,lastPoint.Y); //min x & min y
         points.RemoveAt(p);
-
-        Debug.Log(lastPoint);
         
         v++;
         
@@ -95,7 +101,6 @@ public class WorldMapVisualisation : MonoBehaviour
             {
                 lastPoint = points[p];
                 result[v] = new Vector2(lastPoint.X, lastPoint.Y);
-                Debug.Log(lastPoint);
                 v++;
                 points.RemoveAt(p);
                 p = 0;
@@ -111,7 +116,6 @@ public class WorldMapVisualisation : MonoBehaviour
             {
                 lastPoint = points[p];
                 result[v] = new Vector2(lastPoint.X,lastPoint.Y);
-                Debug.Log(lastPoint);
                 v++;
                 points.RemoveAt(p);
                 p = 0;
@@ -126,7 +130,6 @@ public class WorldMapVisualisation : MonoBehaviour
         {
             lastPoint = points[p];
             result[v] = new Vector2(lastPoint.X,lastPoint.Y);
-            Debug.Log(lastPoint);
             v++;
             points.RemoveAt(p);
         }
@@ -134,7 +137,7 @@ public class WorldMapVisualisation : MonoBehaviour
         return result;
     }
 
-    private Point GetMaxYPoint(List<Point> points)
+    private static Point GetMaxYPoint(List<Point> points)
     {
         Point result = points[0];
 
@@ -146,7 +149,7 @@ public class WorldMapVisualisation : MonoBehaviour
         return result;
     } 
     
-    private Point GetMaxXPoint(List<Point> points)
+    private static Point GetMaxXPoint(List<Point> points)
     {
         Point result = points[0];
         
@@ -168,6 +171,6 @@ public class WorldMapVisualisation : MonoBehaviour
             points.Add(new Point(Random.Range(0,5),Random.Range(0,5)));
         }
         
-        DrawPolygon(points);
+        //DrawPolygon(points);
     }
 }

@@ -9,5 +9,5 @@ public static class GameSettings
     public static int LEVEL_COUNT_MAX = 12;
     //MAP_GEN
     public static int LIMIT_VALUE = 25;
-    public static int MAX_XY = 12;
+    public static int PADDING = 5;
 }
