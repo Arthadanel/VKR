@@ -1,10 +1,37 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using Utility;
 
-public class WorldMapVisualisation
+public static class WorldMapVisualisation
 {
+    public static void DrawPolygon(Polygon polygon, GameObject anchor)
+    {
+        List<Point> points = polygon.GetConvexHull();
+        int verticesCount = points.Count;
+        int Z = 0;
+        
+        Vector2[] vertices2D = new Vector2[verticesCount];
+        Vector3[] vertices3D = new Vector3[verticesCount];
+        int[] triangles = GetTriangles(verticesCount);
+
+        for (int i = 0; i < verticesCount; i++)
+        {
+            vertices2D[i] = new Vector2(points[i].X,points[i].Y);
+            vertices3D[i] = new Vector3(vertices2D[i].x, vertices2D[i].y, Z);
+        }
+        
+        //Create Mesh
+        Mesh mesh = new Mesh();
+        anchor.GetComponent<MeshFilter>().mesh = mesh;
+        mesh.vertices = vertices3D;
+        mesh.uv = vertices2D;
+        mesh.triangles = triangles;
+        SetMeshColor(Random.ColorHSV(),mesh);
+        //Set up collider
+        PolygonCollider2D polygonCollider = anchor.GetComponent<PolygonCollider2D>();
+        polygonCollider.points = vertices2D;
+    }
+
     public static void DrawPolygon(List<Point> points, GameObject anchor)
     { 
         Vector2[] vertices2D = GetConvexHull(points);
@@ -44,27 +71,16 @@ public class WorldMapVisualisation
     private static int[] GetTriangles(int verticesCount)
     {
         int[] triangles = new int[(verticesCount - 2) * 3];
-        int t = 0;
-        int i = 0;
-        while (t+2<verticesCount)
-        {
-            triangles[i] = t;
-            triangles[i+1] = t+1;
-            triangles[i+2] = t+2;
-            t+=2;
-            i += 3;
-        }
 
-        int j = 3;
-        while (i < triangles.Length)
+        int t = -1;
+        int vi = 1;
+        for (int i = 0; i < verticesCount-2; i++)
         {
-            triangles[i] = 0;
-            triangles[i+1] = triangles[j];
-            j+=3;
-            triangles[i+2] = j==i? verticesCount-1: triangles[j];
-            i += 3;
+            triangles[++t] = 0;
+            triangles[++t] = vi;
+            triangles[++t] = ++vi;
         }
-
+        
         return triangles;
     }
 
@@ -161,7 +177,7 @@ public class WorldMapVisualisation
         return result;
     }
 
-    private void Start()
+    private static void Start()
     {
         List<Point> points = new List<Point>();
         Random.InitState(GameSettings.SEED);

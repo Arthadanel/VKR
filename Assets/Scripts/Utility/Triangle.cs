@@ -10,21 +10,6 @@ namespace Utility
         public readonly List<Edge> Edges;
         public readonly List<Point> Points;
         public readonly Point Circumcenter;
-        public readonly float SqrRadius;
-
-        public Triangle(Edge edge1, Edge edge2, Edge edge3)
-        {
-            Edges = new List<Edge>
-            {
-                edge1,
-                edge2,
-                edge3
-            };
-            Edges.Sort();
-            Points = GetPoints();
-            Circumcenter = GetCircumcenter();
-            SqrRadius = Circumcenter.SqrDistance(Points[0]);
-        }
 
         public Triangle(Point a, Point b, Point c)
         {
@@ -39,8 +24,7 @@ namespace Utility
             };
             Edges.Sort();
             Points = GetPoints();
-            //Circumcenter = GetCircumcenter();
-            //SqrRadius = Circumcenter.SqrDistance(Points[0]);
+            Circumcenter = GetCircumcenter();
         }
 
         private Point GetCircumcenter()
@@ -58,39 +42,10 @@ namespace Utility
                            (x3 * x3 + y3 * y3) * (x2 - x1);
             
             float x = xPart/d;
-            float y = xPart/d;
+            float y = yPart/d;
             
             Point circumcenter = new Point(x,y);
             return circumcenter;
-        }
-        
-        private float sign (Point p1, Point p2, Point p3)
-        {
-            return (p1.X - p3.X) * (p2.Y - p3.Y) - (p2.X - p3.X) * (p1.Y - p3.Y);
-        }
-
-        public bool PointInsideTriangle (Point point)
-        {
-            var d1 = sign(point, Points[0], Points[1]);
-            var d2 = sign(point, Points[1], Points[2]);
-            var d3 = sign(point, Points[2], Points[0]);
-
-            var hasNegative = (d1 < 0) || (d2 < 0) || (d3 < 0);
-            var hasPositive = (d1 > 0) || (d2 > 0) || (d3 > 0);
-
-            return !(hasNegative && hasPositive);
-        }
-
-        public Edge ClosestEdge(Point point)
-        {
-            Edge closest = Edges[0];
-            foreach (var edge in Edges)
-            {
-                if (edge.SumSqrDistanceToVertices(point) < closest.SumSqrDistanceToVertices(point))
-                    closest = edge;
-            }
-
-            return closest;
         }
 
         public bool PointWithinCircumcircle(Point point)

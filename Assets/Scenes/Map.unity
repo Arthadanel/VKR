@@ -649,7 +649,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mapAreaTemplate: {fileID: 2059673722488432566, guid: 657aca2f0fb53144e922a7a81274a9fb, type: 3}
-  PointCount: 3
+  PointCount: 6
 --- !u!4 &1284647795
 Transform:
   m_ObjectHideFlags: 0

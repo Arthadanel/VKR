@@ -9,6 +9,7 @@ namespace Utility
         public readonly Point P1;
         public readonly Point P2;
         private List<Triangle> _adjacentTriangles = new List<Triangle>();
+        private List<Point> _edgeWithAdgTrianglePoints = new List<Point>();
         
 
         public Edge(Point p1, Point p2)
@@ -23,18 +24,29 @@ namespace Utility
                 P1 = p1;
                 P2 = p2;
             }
+            _edgeWithAdgTrianglePoints.Add(P1);
+            _edgeWithAdgTrianglePoints.Add(P2);
         }
 
         public Edge(Edge edge)
         {
             P1 = edge.P1;
             P2 = edge.P2;
+            _edgeWithAdgTrianglePoints.Add(P1);
+            _edgeWithAdgTrianglePoints.Add(P2);
         }
 
         public void AddAdjacentTriangle(Triangle triangle)
         {
             if(!_adjacentTriangles.Contains(triangle))
+            {
                 _adjacentTriangles.Add(triangle);
+                foreach (var point in triangle.Points)
+                {
+                    if (point.Equals(P1) || point.Equals(P2)) continue;
+                    _edgeWithAdgTrianglePoints.Add(point);
+                }
+            }
         }
 
         public int GetAdjacentTriangleCount()
@@ -42,9 +54,30 @@ namespace Utility
             return _adjacentTriangles.Count;
         }
 
-        public List<Triangle> GetAdjacentTriangles()
+        public Edge GetEdgeBetweenAdjTrianglesCenters()
         {
-            return _adjacentTriangles;
+            return new Edge(_adjacentTriangles[0].Circumcenter, _adjacentTriangles[1].Circumcenter);
+        }
+
+        public bool AdjTriangleContainsPoint(Point point)
+        {
+            foreach (var triangle in _adjacentTriangles)
+            {
+                foreach (var p in triangle.Points)
+                {
+                    if (p.Equals(point)) return true;
+                }
+            }
+            return false;
+        }
+
+        public bool BelongsToPolygon(Polygon polygon)
+        {
+            Point anchor = polygon.Anchor;
+            if (P1.Equals(anchor)) return true;
+            if (P2.Equals(anchor)) return true;
+
+            return false;
         }
 
         //check if point belongs to the edge

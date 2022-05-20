@@ -25,8 +25,8 @@ public class WorldMapGenerator : MonoBehaviour
         int maxY = 0;
         for (int i = 0; i < pointCount; i++)
         {
-            int x = Random.Range(GameSettings.PADDING, GameSettings.LIMIT_VALUE-GameSettings.PADDING);
-            int y = Random.Range(GameSettings.PADDING, GameSettings.LIMIT_VALUE-GameSettings.PADDING);
+            int x = Random.Range(GameSettings.PADDING, GameSettings.LIMIT_VALUE - GameSettings.PADDING);
+            int y = Random.Range(GameSettings.PADDING, GameSettings.LIMIT_VALUE - GameSettings.PADDING);
             if (x > maxX) maxX = x;
             if (y > maxY) maxY = y;
             Point point = new Point(x, y);
@@ -35,16 +35,11 @@ public class WorldMapGenerator : MonoBehaviour
                 i--;
                 continue;
             }
-            
+
             points.Add(point);
         }
+
         points = points.Distinct().ToList();
-        
-        //DEBUG
-        foreach (var p in points)
-        {
-            Debug.Log(p);
-        }
 
         Triangle outline = new Triangle(
             new Point(0, 0),
@@ -53,25 +48,27 @@ public class WorldMapGenerator : MonoBehaviour
 
         Triangle outline2 = new Triangle(
             new Point(0, 0),
-            new Point(GameSettings.LIMIT_VALUE,0),
+            new Point(GameSettings.LIMIT_VALUE, 0),
             new Point(GameSettings.LIMIT_VALUE, GameSettings.LIMIT_VALUE));
-        
+
         List<Triangle> triangles = new List<Triangle> {outline, outline2};
 
         foreach (var p in points)
         {
-            DelaunayTriangulation( ref triangles, p);
+            DelaunayTriangulation(ref triangles, p);
         }
 
-        Debug.Log(triangles.Count);
         foreach (var triangle in triangles)
         {
-            Debug.Log(triangle);
             DrawTriangle(triangle);
         }
 
-        //VoronoiDiagramConversion(triangles);
-
+        List<Polygon> voronoiPolygons = VoronoiDiagramConversion(triangles, points);
+        foreach (var polygon in voronoiPolygons)
+        {
+            var triangleMesh = Instantiate(mapAreaTemplate, transform);
+            WorldMapVisualisation.DrawPolygon(polygon, triangleMesh);
+        }
     }
 
     private void DrawTriangle(Triangle triangle)
@@ -80,10 +77,11 @@ public class WorldMapGenerator : MonoBehaviour
         WorldMapVisualisation.DrawPolygon(triangle.Points, triangleMesh);
     }
 
-    public List<Edge> VoronoiDiagramConversion(List<Triangle> triangles)
+    public List<Polygon> VoronoiDiagramConversion(List<Triangle> triangles, List<Point> points)
     {
         List<Edge> edges = new List<Edge>();
-        List<Edge> voronoiEdges = new List<Edge>();
+        List<Polygon> polygons = new List<Polygon>();
+        
         foreach (var triangle in triangles)
         {
             foreach (var edge in triangle.Edges)
@@ -100,29 +98,22 @@ public class WorldMapGenerator : MonoBehaviour
             }
         }
 
-        foreach (var edge in edges)
+        for (var i = 0; i < points.Count; i++)
         {
-            //edge.AdjacentTriangles = edge.AdjacentTriangles.Distinct().ToList();
-            Debug.Log("GetAdjacentTriangleCount: "+edge.GetAdjacentTriangleCount());
-            if(edge.GetAdjacentTriangleCount()>2)
+            var point = points[i];
+            Polygon polygon = new Polygon(point);
+            polygons.Add(polygon);
+            foreach (var edge in edges)
             {
-                //WRONG ERROR NEVER SHOULD HAPPEN
-                Debug.Log("Edge: " + edge);
-                List<Triangle> tmp = edge.GetAdjacentTriangles();
-                foreach (var triangle in tmp)
+                if (edge.GetAdjacentTriangleCount() < 2) continue;
+                if (edge.BelongsToPolygon(polygon))
                 {
-                    Debug.Log(triangle);
+                    polygon.AddEdge(edge.GetEdgeBetweenAdjTrianglesCenters());
                 }
             }
-            if(edge.GetAdjacentTriangleCount()<2)continue;
-            List<Triangle> adjTriangles = edge.GetAdjacentTriangles();
-            Point cc1 = adjTriangles[0].Circumcenter;
-            Point cc2 = adjTriangles[1].Circumcenter;
-            Edge newEdge = new Edge(cc1, cc2);
-            voronoiEdges.Add(newEdge);
         }
 
-        return voronoiEdges;
+        return polygons;
     }
 
     private void DelaunayTriangulation(ref List<Triangle> triangles, Point newPoint)
@@ -191,6 +182,6 @@ public class WorldMapGenerator : MonoBehaviour
 
     private void LloydRelaxation()
     {
-        
+        //todo
     }
 }

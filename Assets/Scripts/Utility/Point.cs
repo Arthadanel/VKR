@@ -47,7 +47,7 @@ namespace Utility
 
         public bool Equals(Point other)
         {
-            return other != null && Math.Abs(X - other.X) < 0.0001 && Math.Abs(Y - other.Y) < 0.0001;
+            return other != null && Math.Abs(X - other.X) < 0.00001 && Math.Abs(Y - other.Y) < 0.00001;
         }
 
         public override string ToString()
