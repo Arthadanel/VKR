@@ -12,8 +12,9 @@ GameObject:
   - component: {fileID: 2059673722488432570}
   - component: {fileID: 2059673722488432571}
   - component: {fileID: 2059673722488432573}
+  - component: {fileID: -4293535831396425731}
   m_Layer: 0
-  m_Name: LevelArea
+  m_Name: MapSegment
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -107,3 +108,15 @@ PolygonCollider2D:
   m_AutoTiling: 0
   m_Points:
     m_Paths: []
+--- !u!114 &-4293535831396425731
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2059673722488432566}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ce38f8e0af29458481ac04b5c8bbfd91, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

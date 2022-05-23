@@ -1,6 +1,7 @@
 ﻿public enum TileType
 {
-    DIVIDER,
+    NONE,
+    FILLER,
     WATER,  //void
     GRASS,  //earth
     SAND,   //sand

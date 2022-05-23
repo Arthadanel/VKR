@@ -9,7 +9,8 @@ namespace Utility
         public readonly Point P1;
         public readonly Point P2;
         private List<Triangle> _adjacentTriangles = new List<Triangle>();
-        private List<Point> _edgeWithAdgTrianglePoints = new List<Point>();
+        private List<Polygon> _adjacentPolygons = new List<Polygon>();
+        private Edge _edgeBetweenAdjTrianglesCenters;
         
 
         public Edge(Point p1, Point p2)
@@ -24,16 +25,35 @@ namespace Utility
                 P1 = p1;
                 P2 = p2;
             }
-            _edgeWithAdgTrianglePoints.Add(P1);
-            _edgeWithAdgTrianglePoints.Add(P2);
         }
 
         public Edge(Edge edge)
         {
             P1 = edge.P1;
             P2 = edge.P2;
-            _edgeWithAdgTrianglePoints.Add(P1);
-            _edgeWithAdgTrianglePoints.Add(P2);
+        }
+
+        public void AddAdjacentPolygon(Polygon polygon)
+        {
+            if(!_adjacentPolygons.Contains(polygon))
+            {
+                _adjacentPolygons.Add(polygon);
+            }
+        }
+        public int GetAdjacentPolygonCount()
+        {
+            return _adjacentPolygons.Count;
+        }
+
+        public Polygon GetOtherAdjPolygon(Polygon polygon)
+        {
+            Polygon other = null;
+            if (_adjacentPolygons.Count > 0 && _adjacentPolygons.Contains(polygon))
+            {
+                other = _adjacentPolygons[(_adjacentPolygons.IndexOf(polygon) + 1) % 2];
+            }
+            
+            return other;
         }
 
         public void AddAdjacentTriangle(Triangle triangle)
@@ -41,11 +61,6 @@ namespace Utility
             if(!_adjacentTriangles.Contains(triangle))
             {
                 _adjacentTriangles.Add(triangle);
-                foreach (var point in triangle.Points)
-                {
-                    if (point.Equals(P1) || point.Equals(P2)) continue;
-                    _edgeWithAdgTrianglePoints.Add(point);
-                }
             }
         }
 
@@ -56,19 +71,8 @@ namespace Utility
 
         public Edge GetEdgeBetweenAdjTrianglesCenters()
         {
-            return new Edge(_adjacentTriangles[0].Circumcenter, _adjacentTriangles[1].Circumcenter);
-        }
-
-        public bool AdjTriangleContainsPoint(Point point)
-        {
-            foreach (var triangle in _adjacentTriangles)
-            {
-                foreach (var p in triangle.Points)
-                {
-                    if (p.Equals(point)) return true;
-                }
-            }
-            return false;
+            _edgeBetweenAdjTrianglesCenters ??= new Edge(_adjacentTriangles[0].Circumcenter, _adjacentTriangles[1].Circumcenter);
+            return _edgeBetweenAdjTrianglesCenters;
         }
 
         public bool BelongsToPolygon(Polygon polygon)
@@ -102,11 +106,6 @@ namespace Utility
                 result = ratio1 <= 1 && ratio1 >= 0;
             }
             return result;
-        }
-
-        public float SumSqrDistanceToVertices(Point point)
-        {
-            return P1.SqrDistance(point) + P2.SqrDistance(point);
         }
 
         public override bool Equals(object obj)

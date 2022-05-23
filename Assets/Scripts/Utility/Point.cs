@@ -8,14 +8,14 @@ namespace Utility
         public readonly float Y;
         public Point(float x, float y)
         {
-            X = x;
-            Y = y;
+            this.X = x;
+            this.Y = y;
         }
 
         public Point(int x, int y)
         {
-            X = x;
-            Y = y;
+            this.X = x;
+            this.Y = y;
         }
 
         public float SqrDistance(Point other)

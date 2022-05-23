@@ -8,7 +8,7 @@ using Random = UnityEngine.Random;
 
 public class WorldMapGenerator : MonoBehaviour
 {
-    [SerializeField] private GameObject mapAreaTemplate;
+    [SerializeField] private GameObject mapSegmentPrefab;
     [SerializeField] private int PointCount = 1;
     
     private void Awake()
@@ -58,22 +58,18 @@ public class WorldMapGenerator : MonoBehaviour
             DelaunayTriangulation(ref triangles, p);
         }
 
-        foreach (var triangle in triangles)
-        {
-            DrawTriangle(triangle);
-        }
-
         List<Polygon> voronoiPolygons = VoronoiDiagramConversion(triangles, points);
         foreach (var polygon in voronoiPolygons)
         {
-            var triangleMesh = Instantiate(mapAreaTemplate, transform);
+            var triangleMesh = Instantiate(mapSegmentPrefab, transform);
             WorldMapVisualisation.DrawPolygon(polygon, triangleMesh);
+            triangleMesh.GetComponent<MapSegment>().SetPolygon(polygon);
         }
     }
 
     private void DrawTriangle(Triangle triangle)
     {
-        GameObject triangleMesh = Instantiate(mapAreaTemplate, transform);
+        GameObject triangleMesh = Instantiate(mapSegmentPrefab, transform);
         WorldMapVisualisation.DrawPolygon(triangle.Points, triangleMesh);
     }
 
@@ -98,9 +94,8 @@ public class WorldMapGenerator : MonoBehaviour
             }
         }
 
-        for (var i = 0; i < points.Count; i++)
+        foreach (var point in points)
         {
-            var point = points[i];
             Polygon polygon = new Polygon(point);
             polygons.Add(polygon);
             foreach (var edge in edges)
@@ -108,7 +103,9 @@ public class WorldMapGenerator : MonoBehaviour
                 if (edge.GetAdjacentTriangleCount() < 2) continue;
                 if (edge.BelongsToPolygon(polygon))
                 {
-                    polygon.AddEdge(edge.GetEdgeBetweenAdjTrianglesCenters());
+                    Edge tmp = edge.GetEdgeBetweenAdjTrianglesCenters();
+                    tmp.AddAdjacentPolygon(polygon);
+                    polygon.AddEdge(tmp);
                 }
             }
         }
