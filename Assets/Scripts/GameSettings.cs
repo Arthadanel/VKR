@@ -10,4 +10,6 @@ public static class GameSettings
     //MAP_GEN
     public static int LIMIT_VALUE = 25;
     public static int PADDING = 5;
+    //MAP_NAV
+    public const int MOVE_LIMIT = 64;
 }

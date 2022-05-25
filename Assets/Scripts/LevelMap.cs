@@ -7,13 +7,13 @@ using Utility;
 
 public class LevelMap : MonoBehaviour
 {
-    [SerializeField] GameObject tileBorder;
     [SerializeField] GameObject tileGrass;
-    [SerializeField] GameObject tileWall;
-    [SerializeField] GameObject tileCrate;
-    [SerializeField] private GameObject enemy;
-    [SerializeField] private GameObject ally;
     [SerializeField] private GameObject healer;
+    [SerializeField] List<GameObject> floors;
+    [SerializeField] List<GameObject> walls;
+    [SerializeField] List<GameObject> destructibles;
+    [SerializeField] private List<GameObject> enemies;
+    [SerializeField] private List<GameObject> allies;
 
     public static int BorderLayer = 0;
     public static int TileLayer = 1;
@@ -29,7 +29,7 @@ public class LevelMap : MonoBehaviour
     private void Start()
     {
         bool[,] basicLayout = SetBasicLayout();
-        //todo:pass level layout to GC
+        
         int lengthX = basicLayout.GetLength(0);
         int lengthY = basicLayout.GetLength(1);
         _map = new TileNode[lengthX,lengthY];
@@ -40,15 +40,12 @@ public class LevelMap : MonoBehaviour
             for (int y = 0; y < lengthY; y++)
             {
                 if(!basicLayout[x,y])continue;
-                Tile tmp = Instantiate(tileGrass, new Vector3(x, y, TileLayer), Quaternion.identity, gameObject.transform).GetComponent<Tile>();
-                tmp.InitializeTile(new Coordinates(x, y),TileType.GRASS);
-                _map[x, y] = new TileNode(tmp);
+                Tile tile = PlaceTile(x,y,tileGrass);
+                _map[x, y] = new TileNode(tile);
                 if (!f)
                 {
                     f = true;
-                    Unit unit = Instantiate(ally, new Vector3(x, y, UnitLayer), Quaternion.identity, gameObject.transform)
-                        .GetComponent<Unit>();
-                    unit.SetInitialCoordinates(x, y);
+                    PlaceUnit(x, y, healer);
                 }
             }
         }
@@ -68,6 +65,20 @@ public class LevelMap : MonoBehaviour
 
         LevelMapControl.SetLevelLayout(_map);
         if (OnMapGenerationFinished != null) OnMapGenerationFinished();
+    }
+
+    private Unit PlaceUnit(int x, int y, GameObject prefab)
+    {
+        Unit unit = Instantiate(prefab, new Vector3(x, y, UnitLayer), Quaternion.identity, gameObject.transform)
+            .GetComponent<Unit>();
+        unit.SetInitialCoordinates(x, y);
+        return unit;
+    }
+    private Tile PlaceTile(int x, int y, GameObject prefab)
+    {
+        Tile tile = Instantiate(prefab, new Vector3(x, y, TileLayer), Quaternion.identity, gameObject.transform).GetComponent<Tile>();
+        tile.InitializeTilePrefab(new Coordinates(x, y));
+        return tile;
     }
 
     public Vector3 GetCentralPoint()

@@ -7,9 +7,9 @@ namespace Units
     public class Unit : MonoBehaviour
     {
         [SerializeField] protected internal string specialAction;
-        protected int _attack = 5;
-        protected int _range = 1;
-        protected int _movement = 3;
+        [SerializeField] protected int power = 5;
+        [SerializeField] protected int range = 1;
+        [SerializeField] protected int movement = 3;
         public UnitHealthBar HealthBar { private set; get; }
 
         protected Coordinates _coordinates;
@@ -25,14 +25,14 @@ namespace Units
 
         public int Movement
         {
-            get => _movement;
-            set => _movement = value;
+            get => movement;
+            set => movement = value;
         }
 
         public int Range
         {
-            get => _range;
-            set => _range = value;
+            get => range;
+            set => range = value;
         }
 
         private void Start()
@@ -46,7 +46,7 @@ namespace Units
 
         public int GetAttack()
         {
-            return _attack;
+            return power;
             //todo: buffs
         }
 
@@ -57,7 +57,7 @@ namespace Units
 
         public virtual bool Fight(Unit victim)
         {
-            victim.HealthBar.ChangeHP(-_attack);
+            victim.HealthBar.ChangeHP(-power);
             LevelMapControl.DeactivateUnitSelector();
             return true;
         }

@@ -517,13 +517,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c8bd5be7c25a1bc4c8d7465b75a1a0dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileBorder: {fileID: 6280068090496691413, guid: 1d946bd04b1f2bd47979c5699d21c15c, type: 3}
   tileGrass: {fileID: 7833122367452058934, guid: fa2e18018c1d9d748aa46de657100d9e, type: 3}
-  tileWall: {fileID: 7779147004340460051, guid: 305ba0e0cd8648941af9a815e80a46e9, type: 3}
-  tileCrate: {fileID: 5273428338780651655, guid: 25be9ac31e2ec214abe761b04502bf6a, type: 3}
-  enemy: {fileID: 2124671064489365761, guid: ccbd2bc410f83eb4199210ee4afbf2d6, type: 3}
-  ally: {fileID: 2096566000920009735, guid: 75e05965c036f454d9d1385e4ef22a65, type: 3}
-  healer: {fileID: 6238782132284279164, guid: 459fa0c73ca1a444199418d0b994c7a4, type: 3}
+  healer: {fileID: 2096566000920009735, guid: d39f81dc46274cb499cbde4ba24f9b8b, type: 3}
+  floors:
+  - {fileID: 7833122367452058934, guid: fa2e18018c1d9d748aa46de657100d9e, type: 3}
+  walls:
+  - {fileID: 7779147004340460051, guid: 305ba0e0cd8648941af9a815e80a46e9, type: 3}
+  destructibles:
+  - {fileID: 5273428338780651655, guid: 25be9ac31e2ec214abe761b04502bf6a, type: 3}
+  enemies:
+  - {fileID: 2124671064489365761, guid: 4748714866b4f134b9edaa4870bf82a9, type: 3}
+  - {fileID: 4481356152037504836, guid: 76748e7699d72ab42a262c9ba661a740, type: 3}
+  - {fileID: 4481356152037504836, guid: a8c1ea4b93353234ba216b1373cf1e43, type: 3}
+  - {fileID: 4481356152037504836, guid: 6ed36db2e68612f47b5a4ff1008e8e5d, type: 3}
+  allies:
+  - {fileID: 2096566000920009735, guid: d39f81dc46274cb499cbde4ba24f9b8b, type: 3}
+  - {fileID: 6587827534205097687, guid: bf2302daad67f9945a3eec86e2bfcf29, type: 3}
+  - {fileID: 6587827534205097687, guid: 8c245d31b0851a747a7efbe565c75833, type: 3}
+  - {fileID: 6587827534205097687, guid: 672e0191dcaeceb409c001913c66e1d0, type: 3}
 --- !u!1 &1285700102
 GameObject:
   m_ObjectHideFlags: 0
@@ -572,12 +583,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 800, y: 600}
   m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 0
+  m_MatchWidthOrHeight: 0.5
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96

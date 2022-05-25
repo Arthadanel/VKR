@@ -12,7 +12,7 @@ namespace Units
             {
                 if (LevelMapControl.GetSelectedUnit().specialAction == "heal")
                 { 
-                    HealthBar.ChangeHP(_attack);
+                    HealthBar.ChangeHP(power);
                 }
             }
             else

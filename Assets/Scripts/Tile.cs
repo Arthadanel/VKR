@@ -8,6 +8,11 @@ using Utility;
 
 public class Tile : MonoBehaviour
 {
+    [SerializeField] private TileType type = TileType.GRASS;
+    [SerializeField] private bool isObstruction = false;
+    [SerializeField] private int movementCost = 1;
+    [SerializeField] private int attackHindrance = 0;
+    
     private Coordinates _coordinates;
     private GameObject _highlighter;
 
@@ -23,7 +28,7 @@ public class Tile : MonoBehaviour
 
     public int GetMovementCost()
     {
-        return IsOccupied ? GameSettings.LIMIT_VALUE : _movementCost;
+        return isObstruction || IsOccupied ? GameSettings.MOVE_LIMIT : _movementCost;
     }
     private int _attackHindrance;
     public int GetAttackHindrance()
@@ -42,6 +47,14 @@ public class Tile : MonoBehaviour
         _isObstruction = isObstruction;
         //todo: set move cost based on tile type and obstruction property
         _attackHindrance = 0;
+    }
+    public void InitializeTilePrefab(Coordinates coordinates)
+    {
+        _coordinates = coordinates;
+        _tileType = type;
+        _isObstruction = isObstruction;
+        _movementCost = movementCost;
+        _attackHindrance = attackHindrance;
     }
 
     public void MoveTo(Unit unit)

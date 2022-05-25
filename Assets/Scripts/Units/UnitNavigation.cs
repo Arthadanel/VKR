@@ -22,7 +22,7 @@ namespace Units
         {
             int maxCost = unit.Movement;
             TileNode start = LevelMapControl.GetTileAtCoordinates(unit.Coordinates);
-            List<TileNode> reachableTiles = start.GetTilesInRange(maxCost);
+            List<TileNode> reachableTiles = start.GetTilesInRange(maxCost+1);
             reachableTiles = reachableTiles.Distinct().ToList();
             //reachableTiles.RemoveAt(0);
             
