@@ -38,10 +38,6 @@ namespace Units
         private void Start()
         {
             HealthBar = GetComponentInChildren<UnitHealthBar>();
-            if (specialAction == "attack")
-            {
-                HealthBar.ChangeHP(-7);
-            }
         }
 
         public int GetAttack()

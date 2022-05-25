@@ -1,11 +1,13 @@
 ﻿using System;
+using UI;
 using Units;
 using UnityEngine;
 
 public class GameController:MonoBehaviour
 {
-    [SerializeField] private LevelMap levelGen;
+    [SerializeField] private LevelMap _levelGen;
     [SerializeField] private Camera _camera;
+    [SerializeField] private GUIController _guiController;
     [SerializeField] private GameObject tileSelectorAsset;
     [SerializeField] private GameObject unitSelectorAsset;
     [SerializeField] private GameObject movementHighlighterAsset;
@@ -14,7 +16,7 @@ public class GameController:MonoBehaviour
 
     private void Awake()
     {
-        levelGen.OnMapGenerationFinished += SetCameraPosition;
+        _levelGen.OnMapGenerationFinished += SetCameraPosition;
     }
 
     private void Start()
@@ -32,6 +34,6 @@ public class GameController:MonoBehaviour
 
     private void SetCameraPosition()
     {
-        _camera.transform.position = levelGen.GetCentralPoint();
+        _camera.transform.position = _levelGen.GetCentralPoint();
     }
 }
