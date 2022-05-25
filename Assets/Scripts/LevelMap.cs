@@ -22,9 +22,71 @@ public class LevelMap : MonoBehaviour
     private List<GameObject> borders = new List<GameObject>();
 
     public static int CURRENT_LEVEL = 1;
-    private List<Tile> _map;
+    private TileNode[,] _map;
+
+    public Action OnMapGenerationFinished;
+
+    private void Start()
+    {
+        bool[,] basicLayout = SetBasicLayout();
+        //todo:pass level layout to GC
+        int lengthX = basicLayout.GetLength(0);
+        int lengthY = basicLayout.GetLength(1);
+        _map = new TileNode[lengthX,lengthY];
+        bool f = false;
+
+        for (int x = 0; x < lengthX; x++)
+        {
+            for (int y = 0; y < lengthY; y++)
+            {
+                if(!basicLayout[x,y])continue;
+                Tile tmp = Instantiate(tileGrass, new Vector3(x, y, TileLayer), Quaternion.identity, gameObject.transform).GetComponent<Tile>();
+                tmp.InitializeTile(new Coordinates(x, y),TileType.GRASS);
+                _map[x, y] = new TileNode(tmp);
+                if (!f)
+                {
+                    f = true;
+                    Unit unit = Instantiate(ally, new Vector3(x, y, UnitLayer), Quaternion.identity, gameObject.transform)
+                        .GetComponent<Unit>();
+                    unit.SetInitialCoordinates(x, y);
+                }
+            }
+        }
+
+        for (int x = 0; x < lengthX; x++)
+        {
+            for (int y = 0; y < lengthY; y++)
+            {
+                if (_map[x, y] == null) continue;
+                TileNode left = x == 0 ? null : _map[x - 1, y];
+                TileNode top = y == 0 ? null : _map[x, y - 1];
+                TileNode right = x == lengthX - 1 ? null : _map[x + 1, y];
+                TileNode bottom = y == lengthY - 1 ? null : _map[x, y + 1];
+                _map[x, y].SetNeighbourTileNodes(left, top, right, bottom);
+            }
+        }
+
+        LevelMapControl.SetLevelLayout(_map);
+        if (OnMapGenerationFinished != null) OnMapGenerationFinished();
+    }
+
+    public Vector3 GetCentralPoint()
+    {
+        int maxX = _map.GetLength(0);
+        int maxY = _map.GetLength(1);
+        Vector3 result = new Vector3(maxX/2f,maxY/2f, -10);
+        return result;
+    }
+
+    public void SwitchBorderVisibility()
+    {
+        foreach (GameObject border in borders)
+        {
+            border.SetActive(!border.activeSelf);
+        }
+    }
     
-    public void SetBasicLayout()
+    public bool[,] SetBasicLayout()
     {
         List<Point> convexHull = SelectedLevelData.GetConvexHull();
         float minX = convexHull[0].X;   //x padding
@@ -87,18 +149,10 @@ public class LevelMap : MonoBehaviour
             }
         }
 
-        for (int x = 0; x < lengthX; x++)
-        {
-            for (int y = 1; y < lengthY; y++)
-            {
-                if(!filledLayout[x,y])continue;
-                GameObject tmp = Instantiate(tileGrass, new Vector3(x, y, TileLayer), Quaternion.identity, gameObject.transform);
-                tmp.GetComponent<Tile>().Coordinates = new Coordinates(x, y);
-            }
-        }
+        return filledLayout;
     }
 
-    private bool[,] FillOutline(bool[,] layout, int lengthX, int lengthY)
+    private void FillOutline(bool[,] layout, int lengthX, int lengthY)
     {
         for (int x = 0; x < lengthX; x++)
         {
@@ -147,8 +201,6 @@ public class LevelMap : MonoBehaviour
                 }
             }
         }
-
-        return layout;
     }
     
     void LineBresenham(Point point1, Point point2, bool[,] layout)
@@ -201,18 +253,5 @@ public class LevelMap : MonoBehaviour
     public void PlaceUnits()
     {
         
-    }
-
-    public void SwitchBorderVisibility()
-    {
-        foreach (GameObject border in borders)
-        {
-            border.SetActive(!border.activeSelf);
-        }
-    }
-
-    private void Start()
-    {
-        SetBasicLayout();
     }
 }

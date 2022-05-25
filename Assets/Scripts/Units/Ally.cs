@@ -1,5 +1,4 @@
 ﻿using System;
-using DefaultNamespace;
 using UnityEngine;
 
 namespace Units
@@ -8,12 +7,17 @@ namespace Units
     {
         private void OnMouseDown()
         {
+            LevelMapControl.DeactivateMoveReachHighlight();
             if (LevelMapControl.IsUnitSelected)
             {
                 if (LevelMapControl.GetSelectedUnit().specialAction == "heal")
                 { 
                     HealthBar.ChangeHP(_attack);
                 }
+            }
+            else
+            {
+                UnitNavigation.DisplayMovementArea(this);
             }
             LevelMapControl.ActivateUnitSelector(this);
         }

@@ -1,5 +1,4 @@
 ﻿using System;
-using DefaultNamespace;
 using UnityEngine;
 
 namespace Units
@@ -10,6 +9,8 @@ namespace Units
         {
             if(LevelMapControl.IsUnitSelected)
             {
+                LevelMapControl.DeactivateMoveReachHighlight();
+
                 Unit selectedUnit = LevelMapControl.GetSelectedUnit();
                 if (selectedUnit.Coordinates.NextTo(_coordinates))
                 {

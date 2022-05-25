@@ -152,8 +152,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6baf2d2d2c5141d495c1bec87e3d6ece, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  selectorAsset: {fileID: 8732582032551496651, guid: 2866d48c13fb0a34abfacad6820d22fa, type: 3}
+  levelGen: {fileID: 1194565300}
+  _camera: {fileID: 795190870}
+  tileSelectorAsset: {fileID: 8732582032551496651, guid: 2866d48c13fb0a34abfacad6820d22fa, type: 3}
   unitSelectorAsset: {fileID: 7753215705021510891, guid: f8a9a825f3cc9db4eafad63bab967b5e, type: 3}
+  movementHighlighterAsset: {fileID: 8732582032551496651, guid: 5f2f29a020e798548a383c67a9396b2f, type: 3}
+  attackHighlighterAsset: {fileID: 4721943110207861046, guid: 491b914951dca5140bce66b236240ca1, type: 3}
+  pathHighlighterAsset: {fileID: 8732582032551496651, guid: 28e6cc9aae4c71e4aaee7bc74068d3f4, type: 3}
 --- !u!4 &246394166
 Transform:
   m_ObjectHideFlags: 0
@@ -223,7 +228,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_BackGroundColor: {r: 0.21960784, g: 0.21960784, b: 0.21960784, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0

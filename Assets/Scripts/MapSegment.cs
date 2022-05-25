@@ -14,7 +14,6 @@ public class MapSegment:MonoBehaviour
 
     private void OnMouseEnter()
     {
-        Debug.Log(_polygon);
     }
 
     private void OnMouseDown()

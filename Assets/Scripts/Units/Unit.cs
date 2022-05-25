@@ -1,5 +1,4 @@
 using System;
-using DefaultNamespace;
 using UnityEngine;
 using Utility;
 
@@ -9,8 +8,8 @@ namespace Units
     {
         [SerializeField] protected internal string specialAction;
         protected int _attack = 5;
-        protected int _range;
-        protected int _movement;
+        protected int _range = 1;
+        protected int _movement = 3;
         public UnitHealthBar HealthBar { private set; get; }
 
         protected Coordinates _coordinates;
@@ -19,9 +18,21 @@ namespace Units
             get => _coordinates;
             set
             {
-                UnitMovement.Move(this,_coordinates,value);//initiate movement
+                UnitNavigation.Move(this,_coordinates,value);//initiate movement
                 _coordinates = value;
             }
+        }
+
+        public int Movement
+        {
+            get => _movement;
+            set => _movement = value;
+        }
+
+        public int Range
+        {
+            get => _range;
+            set => _range = value;
         }
 
         private void Start()
@@ -47,7 +58,7 @@ namespace Units
         public virtual bool Fight(Unit victim)
         {
             victim.HealthBar.ChangeHP(-_attack);
-            LevelMapControl.DeactivateUniteSelector();
+            LevelMapControl.DeactivateUnitSelector();
             return true;
         }
 
