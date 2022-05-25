@@ -10,9 +10,6 @@ public class GameController:MonoBehaviour
     [SerializeField] private GUIController _guiController;
     [SerializeField] private GameObject tileSelectorAsset;
     [SerializeField] private GameObject unitSelectorAsset;
-    [SerializeField] private GameObject movementHighlighterAsset;
-    [SerializeField] private GameObject attackHighlighterAsset;
-    [SerializeField] private GameObject pathHighlighterAsset;
 
     private void Awake()
     {
@@ -29,7 +26,6 @@ public class GameController:MonoBehaviour
         unitSelector.SetActive(false);
         LevelController.SetUnitSelector(unitSelector);
         
-        LevelController.SetHighlighters(movementHighlighterAsset,attackHighlighterAsset,pathHighlighterAsset);
         LevelController.SetGUIController(_guiController);
     }
 

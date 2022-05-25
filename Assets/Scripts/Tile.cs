@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using AI;
+using UI;
 using Units;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -104,7 +105,7 @@ public class Tile : MonoBehaviour
         if (LevelController.IsUnitSelected)
         {
             if (_highlighter is null) return;
-            LevelController.DeactivateMoveReachHighlight();
+            GUIController.DeactivateHighlights();
             LevelController.GetSelectedUnit().Coordinates = _coordinates;
         }
     }

@@ -1,4 +1,7 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Collections.Generic;
+using Units;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -8,6 +11,24 @@ namespace UI
     {
         [SerializeField] private ActionPanel actionPanel;
         [SerializeField] private GameObject turnPanel;
+        
+        [SerializeField] private GameObject movementHighlighterAsset;
+        [SerializeField] private GameObject attackHighlighterAsset;
+        [SerializeField] private GameObject buffHighlighterAsset;
+
+        private static Dictionary<ActionType, GameObject> _highlights;
+
+        private static List<TileNode> _highlightedTiles;
+
+        private void Start()
+        {
+            _highlights= new Dictionary<ActionType, GameObject>
+            {
+                {ActionType.MOVE, movementHighlighterAsset},
+                {ActionType.ATTACK, attackHighlighterAsset},
+                {ActionType.BUFF, buffHighlighterAsset}
+            };
+        }
 
         public void SetEnemyTurn(bool isEnemyTurn)
         {
@@ -22,6 +43,27 @@ namespace UI
         public ActionPanel GetActionPanel()
         {
             return actionPanel;
+        }
+
+        public static void ActivateHighlights(List<TileNode> tiles, ActionType highlightType)
+        {
+            _highlightedTiles = tiles;
+
+            foreach (var tile in tiles)
+            {
+                tile.GetTileData().AddHighlighter(_highlights[highlightType]);
+            }
+        }
+
+        public static void DeactivateHighlights()
+        {
+            if (_highlightedTiles == null) return;
+            
+            foreach (var tile in _highlightedTiles)
+            {
+                tile.GetTileData().ClearHighlighter();
+            }
+            _highlightedTiles = null;
         }
     }
 }

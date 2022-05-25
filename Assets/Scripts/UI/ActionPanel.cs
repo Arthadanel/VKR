@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Units;
 using UnityEngine;
 using UnityEngine.UI;
@@ -35,11 +37,24 @@ namespace UI
             specialBtn.interactable = true;
             cancelBtn.interactable = false;
             ResetButtonColor();
+            GUIController.DeactivateHighlights();
+        }
+
+        private void HighlightTilesInRange(int range, ActionType highlightType)
+        {
+            TileNode start = LevelController.GetTileAtCoordinates(_unit.Coordinates);
+            List<TileNode> reachableTiles = start.GetTilesInRange(range+1);
+            reachableTiles = reachableTiles.Distinct().ToList();
+            start.GetTileData().ClearHighlighter();
+            
+            GUIController.ActivateHighlights(reachableTiles,highlightType);
         }
         
         public void OnMove()
         {
             if (cancelBtn.interactable) return;
+            
+            HighlightTilesInRange(_unit.GetMovement(),ActionType.MOVE);
             
             HighlightButton(moveBtn);
         }
@@ -48,12 +63,16 @@ namespace UI
         {
             if (cancelBtn.interactable) return;
             
+            HighlightTilesInRange(1,ActionType.ATTACK);
+            
             HighlightButton(attackBtn);
         }
         
         public void OnSpecialAction()
         {
             if (cancelBtn.interactable) return;
+            
+            HighlightTilesInRange(_unit.GetSpecialRange(),ActionType.BUFF);
             
             HighlightButton(specialBtn);
         }
@@ -65,6 +84,7 @@ namespace UI
             specialBtn.interactable = true;
             cancelBtn.interactable = false;
             ResetButtonColor();
+            GUIController.DeactivateHighlights();
         }
 
         private void ChangeMoveDisplay(int movesLeft)
@@ -76,7 +96,7 @@ namespace UI
         private void HighlightButton(Button button)
         {
             SetButtonsState(true);
-            button.interactable = true;
+            //button.interactable = true;
             button.GetComponent<Image>().color =_highlightColor;
         }
 

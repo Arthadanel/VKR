@@ -8,16 +8,11 @@ public static class LevelController
 {
     private static GameObject _tileSelector;
     private static GameObject _unitSelector;
-    private static GameObject _moveHighlighter;
-    private static GameObject _attackHighlighter;
-    private static GameObject _pathHighlighter;
     
     private static TileNode[,] _levelLayout;
     private static GUIController _guiController;
     
     private static Unit _selectedUnit;
-    private static List<TileNode> lastAttackTiles;
-    private static List<TileNode> lastMoveTiles;
     public static bool IsUnitSelected { get; private set; }
 
     #region PassGameControllerValues
@@ -41,12 +36,12 @@ public static class LevelController
         _unitSelector = unitSelector;
     }
 
-    public static void SetHighlighters(GameObject move, GameObject attack, GameObject path)
-    {
-        _moveHighlighter = move;
-        _attackHighlighter = attack;
-        _pathHighlighter = path;
-    }
+    // public static void SetHighlighters(GameObject move, GameObject attack, GameObject path)
+    // {
+    //     _moveHighlighter = move;
+    //     _attackHighlighter = attack;
+    //     _pathHighlighter = path;
+    // }
     #endregion
 
     public static void PositionSelector(Coordinates coordinates)
@@ -87,34 +82,5 @@ public static class LevelController
     public static TileNode GetTileAtCoordinates(Coordinates coordinates)
     {
         return _levelLayout[coordinates.Row, coordinates.Column];
-    }
-
-    public static void ActivateMoveReachHighlight(List<TileNode> tiles)
-    {
-        lastMoveTiles = tiles;
-
-        foreach (var tile in tiles)
-        {
-            tile.GetTileData().AddHighlighter(_moveHighlighter);
-        }
-    }
-
-    public static void DeactivateMoveReachHighlight()
-    {
-        if (lastMoveTiles != null)
-            foreach (var tile in lastMoveTiles)
-            {
-                tile.GetTileData().ClearHighlighter();
-            }
-
-        lastMoveTiles = null;
-    }
-
-    public static void ActivateAttackReachHighlight(List<TileNode> tiles)
-    {
-        foreach (var tile in tiles)
-        {
-            
-        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using UI;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -12,7 +13,7 @@ namespace Units
             
             if(LevelController.IsUnitSelected)
             {
-                LevelController.DeactivateMoveReachHighlight();
+                GUIController.DeactivateHighlights();
 
                 Unit selectedUnit = LevelController.GetSelectedUnit();
                 if (selectedUnit.Coordinates.NextTo(_coordinates))

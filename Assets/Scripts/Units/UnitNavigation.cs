@@ -26,7 +26,8 @@ namespace Units
             reachableTiles = reachableTiles.Distinct().ToList();
             //reachableTiles.RemoveAt(0);
             
-            LevelController.ActivateMoveReachHighlight(reachableTiles);
+            
+            //LevelController.ActivateMoveReachHighlight(reachableTiles);
 
         }
         public static void DisplayAttackArea(Unit unit)
