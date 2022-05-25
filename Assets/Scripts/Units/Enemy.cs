@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace Units
 {
@@ -7,11 +8,13 @@ namespace Units
     {
         private void OnMouseDown()
         {
-            if(LevelMapControl.IsUnitSelected)
+            if (EventSystem.current.IsPointerOverGameObject()) return;
+            
+            if(LevelController.IsUnitSelected)
             {
-                LevelMapControl.DeactivateMoveReachHighlight();
+                LevelController.DeactivateMoveReachHighlight();
 
-                Unit selectedUnit = LevelMapControl.GetSelectedUnit();
+                Unit selectedUnit = LevelController.GetSelectedUnit();
                 if (selectedUnit.Coordinates.NextTo(_coordinates))
                 {
                     selectedUnit.Fight(this);

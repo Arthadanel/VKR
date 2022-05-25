@@ -23,13 +23,14 @@ public class GameController:MonoBehaviour
     {
         GameObject selector = Instantiate(tileSelectorAsset, Vector3.zero, Quaternion.identity);
         selector.SetActive(false);
-        LevelMapControl.SetTileSelector(selector);
+        LevelController.SetTileSelector(selector);
             
         GameObject unitSelector = Instantiate(unitSelectorAsset, Vector3.zero, Quaternion.identity);
         unitSelector.SetActive(false);
-        LevelMapControl.SetUnitSelector(unitSelector);
+        LevelController.SetUnitSelector(unitSelector);
         
-        LevelMapControl.SetHighlighters(movementHighlighterAsset,attackHighlighterAsset,pathHighlighterAsset);
+        LevelController.SetHighlighters(movementHighlighterAsset,attackHighlighterAsset,pathHighlighterAsset);
+        LevelController.SetGUIController(_guiController);
     }
 
     private void SetCameraPosition()

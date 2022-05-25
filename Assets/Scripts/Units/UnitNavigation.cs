@@ -9,7 +9,7 @@ namespace Units
     {
         public static void Move(Unit unit, Coordinates start, Coordinates end)
         {
-            LevelMapControl.DeactivateUnitSelector();
+            LevelController.DeactivateUnitSelection();
             unit.transform.position = end.GetVector3(LevelMap.UnitLayer);
         }
 
@@ -20,19 +20,19 @@ namespace Units
 
         public static void DisplayMovementArea(Unit unit)
         {
-            int maxCost = unit.Movement;
-            TileNode start = LevelMapControl.GetTileAtCoordinates(unit.Coordinates);
+            int maxCost = unit.GetMovement();
+            TileNode start = LevelController.GetTileAtCoordinates(unit.Coordinates);
             List<TileNode> reachableTiles = start.GetTilesInRange(maxCost+1);
             reachableTiles = reachableTiles.Distinct().ToList();
             //reachableTiles.RemoveAt(0);
             
-            LevelMapControl.ActivateMoveReachHighlight(reachableTiles);
+            LevelController.ActivateMoveReachHighlight(reachableTiles);
 
         }
         public static void DisplayAttackArea(Unit unit)
         {
-            int maxCost = unit.Range;
-            TileNode start = LevelMapControl.GetTileAtCoordinates(unit.Coordinates);
+            int maxCost = unit.GetSpecialRange();
+            TileNode start = LevelController.GetTileAtCoordinates(unit.Coordinates);
 
         }
     }

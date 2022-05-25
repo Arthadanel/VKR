@@ -1,17 +1,19 @@
 using System;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using Utility;
 
 namespace Units
 {
     public class Unit : MonoBehaviour
     {
-        [SerializeField] protected internal string specialAction;
+        [SerializeField] protected string specialAction;
         [SerializeField] protected int power = 5;
         [SerializeField] protected int range = 1;
         [SerializeField] protected int movement = 3;
         public UnitHealthBar HealthBar { private set; get; }
 
+        private float _powerModifier = 0.5f;
         protected Coordinates _coordinates;
         public Coordinates Coordinates
         {
@@ -23,27 +25,44 @@ namespace Units
             }
         }
 
-        public int Movement
+        public string GetSpecialName()
         {
-            get => movement;
-            set => movement = value;
+            return specialAction;
         }
 
-        public int Range
+        public int GetAttackPower()
         {
-            get => range;
-            set => range = value;
+            return specialAction == "attack" ? power : (int) (power * _powerModifier);
+        }
+
+        public int GetMovement()
+        {
+            return movement;
+        }
+
+        public int GetSpecialRange()
+        {
+            return range;
+        }
+
+        public int GetSpecialAttackPower()
+        {
+            return power;
+        }
+
+        public Action GetSpecialAction()
+        {
+            return SpecialAction;
+        }
+
+        protected virtual void SpecialAction()
+        {
+            //todo
         }
 
         private void Start()
         {
             HealthBar = GetComponentInChildren<UnitHealthBar>();
-        }
-
-        public int GetAttack()
-        {
-            return power;
-            //todo: buffs
         }
 
         public void SetInitialCoordinates(int row, int column)
@@ -54,13 +73,15 @@ namespace Units
         public virtual bool Fight(Unit victim)
         {
             victim.HealthBar.ChangeHP(-power);
-            LevelMapControl.DeactivateUnitSelector();
+            LevelController.DeactivateUnitSelection();
             return true;
         }
 
         private void OnMouseEnter()
         {
-            LevelMapControl.PositionSelector(_coordinates);
+            if (EventSystem.current.IsPointerOverGameObject()) return;
+            
+            LevelController.PositionSelector(_coordinates);
         }
     }
 }

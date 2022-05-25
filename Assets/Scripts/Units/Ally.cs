@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace Units
 {
@@ -7,19 +8,30 @@ namespace Units
     {
         private void OnMouseDown()
         {
-            LevelMapControl.DeactivateMoveReachHighlight();
-            if (LevelMapControl.IsUnitSelected)
+            if (EventSystem.current.IsPointerOverGameObject()) return;
+            
+            if (LevelController.IsUnitSelected)
             {
-                if (LevelMapControl.GetSelectedUnit().specialAction == "heal")
-                { 
-                    HealthBar.ChangeHP(power);
-                }
+                LevelController.DeactivateUnitSelection();
             }
             else
             {
-                UnitNavigation.DisplayMovementArea(this);
+                LevelController.ActivateUnitSelection(this);
             }
-            LevelMapControl.ActivateUnitSelector(this);
+            //=============
+            
+            // LevelMapControl.DeactivateMoveReachHighlight();
+            // if (LevelMapControl.IsUnitSelected)
+            // {
+            //     if (LevelMapControl.GetSelectedUnit().GetSpecialName() == "heal")
+            //     { 
+            //         HealthBar.ChangeHP(power);
+            //     }
+            // }
+            // else
+            // {
+            //     UnitNavigation.DisplayMovementArea(this);
+            // }
         }
     }
 }

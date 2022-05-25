@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace UI
@@ -11,6 +12,16 @@ namespace UI
         public void SetEnemyTurn(bool isEnemyTurn)
         {
             turnPanel.SetActive(isEnemyTurn);
+        }
+
+        public void ExitToMap()
+        {
+            SceneManager.LoadScene("Map");
+        }
+
+        public ActionPanel GetActionPanel()
+        {
+            return actionPanel;
         }
     }
 }

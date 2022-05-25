@@ -63,7 +63,7 @@ public class LevelMap : MonoBehaviour
             }
         }
 
-        LevelMapControl.SetLevelLayout(_map);
+        LevelController.SetLevelLayout(_map);
         if (OnMapGenerationFinished != null) OnMapGenerationFinished();
     }
 

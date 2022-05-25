@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using AI;
 using Units;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using Utility;
 
 public class Tile : MonoBehaviour
@@ -89,19 +90,22 @@ public class Tile : MonoBehaviour
 
     private void OnMouseEnter()
     {
-        LevelMapControl.PositionSelector(_coordinates);
+        if (EventSystem.current.IsPointerOverGameObject()) return;
+
+        LevelController.PositionSelector(_coordinates);
     }
 
     private void OnMouseDown()
     {
+        if (EventSystem.current.IsPointerOverGameObject()) return;
 
         if(_tileType!=TileType.GRASS)
             return;
-        if (LevelMapControl.IsUnitSelected)
+        if (LevelController.IsUnitSelected)
         {
             if (_highlighter is null) return;
-            LevelMapControl.DeactivateMoveReachHighlight();
-            LevelMapControl.GetSelectedUnit().Coordinates = _coordinates;
+            LevelController.DeactivateMoveReachHighlight();
+            LevelController.GetSelectedUnit().Coordinates = _coordinates;
         }
     }
 }
