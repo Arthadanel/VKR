@@ -59,11 +59,26 @@ public class WorldMapGenerator : MonoBehaviour
         }
 
         List<Polygon> voronoiPolygons = VoronoiDiagramConversion(triangles, points);
+        
+        
+
+        int levelNum = 1;
+        voronoiPolygons[0].LevelNumber = levelNum++;
+        
         foreach (var polygon in voronoiPolygons)
         {
+            foreach (var edge in polygon.Edges)//set level nums
+            {
+                if (edge.GetOtherAdjPolygon(polygon)?.LevelNumber == 0)
+                {
+                    edge.GetOtherAdjPolygon(polygon).LevelNumber = levelNum++;
+                }
+            }
+            
             var triangleMesh = Instantiate(mapSegmentPrefab, transform);
             WorldMapVisualisation.DrawPolygon(polygon, triangleMesh);
             triangleMesh.GetComponent<MapSegment>().SetPolygon(polygon);
+            Debug.Log(polygon.LevelNumber);
         }
     }
 

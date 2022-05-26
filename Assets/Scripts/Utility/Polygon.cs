@@ -4,11 +4,13 @@ using UnityEngine;
 
 namespace Utility
 {
-    public class Polygon
+    public class Polygon:IComparable
     {
         public readonly List<Edge> Edges;
         private List<Point> _convexHull;
         public readonly Point Anchor;
+
+        public int LevelNumber = 0;
 
         public Polygon(Point anchor)
         {
@@ -71,6 +73,13 @@ namespace Utility
         public override string ToString()
         {
             return Anchor.ToString() + "|" + Edges.Count;
+        }
+
+        public int CompareTo(object obj)
+        {
+            Polygon other = (Polygon) obj;
+            if (LevelNumber == other.LevelNumber) return 0;
+            return LevelNumber > other.LevelNumber ? 1 : -1;
         }
     }
 }

@@ -48,7 +48,7 @@ namespace Utility
         public Polygon GetOtherAdjPolygon(Polygon polygon)
         {
             Polygon other = null;
-            if (_adjacentPolygons.Count > 0 && _adjacentPolygons.Contains(polygon))
+            if (_adjacentPolygons.Count > 1 && _adjacentPolygons.Contains(polygon))
             {
                 other = _adjacentPolygons[(_adjacentPolygons.IndexOf(polygon) + 1) % 2];
             }
@@ -134,7 +134,7 @@ namespace Utility
         {
             Edge other = (Edge) obj;
             return P1.Equals(other.P1) ? P2.CompareTo(other.P2) : P1.CompareTo(other.P1);
-        }//NOT TESTED
+        }
 
         public override string ToString()
         {
