@@ -48,7 +48,7 @@ public static class LevelController
     {
         _tileCount = tileCount;
 
-        MaxActionPoints = tileCount / (GameSettings.IS_DIFFICULT ? 33 : 25);
+        MaxActionPoints = tileCount / (GameSettings.IS_DIFFICULT ? 25 : 14);
         _actionPoints = MaxActionPoints;
         _guiController.UpdateActionPoints(_actionPoints);
     }
@@ -96,5 +96,26 @@ public static class LevelController
     public static TileNode GetTileAtCoordinates(Coordinates coordinates)
     {
         return _levelLayout[coordinates.Row, coordinates.Column];
+    }
+
+    //todo:currently ignoring AI taunting player units, fix
+    public static bool MassSetPriorityTarget(Unit taunterUnit)
+    {
+        bool result = false;
+        TileNode start = GetTileAtCoordinates(taunterUnit.Coordinates);
+        List<TileNode> reachableTiles = start.GetTilesInRange(taunterUnit.GetSpecialRange());
+        bool allyT = taunterUnit is Ally;
+        bool allyU;
+        foreach (var tile in reachableTiles)
+        {
+            if (!tile.GetTileData().IsOccupied) continue;
+            Unit unit = tile.GetTileData().GetCurrentUnit();
+            allyU = unit is Ally;
+            if(allyT!=allyU) continue;
+            result = true;
+            unit.Target = taunterUnit;
+        }
+
+        return result;
     }
 }

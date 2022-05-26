@@ -17,6 +17,7 @@ namespace Units
         private Dictionary<UnitType, float> _powerModifiers;
         protected Coordinates _coordinates;
         public ActionType SelectedAction { get; set; }
+        public Unit Target { get; set; }
 
         private void Start()
         {
@@ -36,11 +37,6 @@ namespace Units
                 UnitNavigation.Move(this,_coordinates,value);//initiate movement
                 _coordinates = value;
             }
-        }
-
-        public UnitType GetUnitType()
-        {
-            return unitType;
         }
 
         public string GetSpecialName()
@@ -68,14 +64,25 @@ namespace Units
             return power;
         }
 
-        public Action GetSpecialAction()
-        {
-            return SpecialAction;
-        }
+        // public Func<Tile, bool> GetSpecialAction()
+        // {
+        //     return SpecialAction;
+        // }
 
-        protected virtual void SpecialAction()
+        public bool SpecialAction(Tile tile)
         {
-            //todo
+            bool success = false;
+            switch (specialAction)
+            {
+                case "heal":
+                    if (!tile.IsOccupied) return false;
+                    success = tile.GetCurrentUnit().HealthBar.ChangeHP(+GetSpecialAttackPower());
+                    break;
+                case "taunt":
+                    success = LevelController.MassSetPriorityTarget(this);
+                    break;
+            }
+            return success;
         }
 
         public void SetInitialCoordinates(int row, int column)
@@ -83,11 +90,40 @@ namespace Units
             _coordinates = new Coordinates(row, column);
         }
 
-        public virtual bool Fight(Unit victim)
+        public bool Fight(Tile tile)
         {
-            victim.HealthBar.ChangeHP(-power);
-            LevelController.DeactivateUnitSelection();
+            if (!tile.IsOccupied) return false;
+            
+            Unit victim = tile.GetCurrentUnit();
+            victim.HealthBar.ChangeHP(-GetAttackPower());
+
             return true;
+        }
+
+        public void InteractWith(Tile tile)
+        {
+            bool actionPerformed = false;
+            int apMultiplier = 1;
+            switch (SelectedAction)
+            {
+                case ActionType.MOVE:
+                    tile.MoveTo(this);
+                    actionPerformed = true;
+                    break;
+                case ActionType.ATTACK:
+                    actionPerformed = Fight(tile);
+                    break;
+                case ActionType.SPECIAL:
+                    actionPerformed = unitType == UnitType.DAMAGE ? Fight(tile) : SpecialAction(tile);
+                    apMultiplier = 2;
+                    break;
+            }
+
+            if (actionPerformed)
+            {
+                LevelController.ConsumeActionPoints(tile.TileInteractionCost * apMultiplier);
+                LevelController.DeactivateUnitSelection();
+            }
         }
 
         private void OnMouseEnter()
@@ -95,6 +131,11 @@ namespace Units
             if (EventSystem.current.IsPointerOverGameObject()) return;
             
             LevelController.PositionSelector(_coordinates);
+        }
+
+        public ActionType GetSpecialType()
+        {
+            return unitType == UnitType.DAMAGE ? ActionType.ATTACK : ActionType.SPECIAL;
         }
     }
 }

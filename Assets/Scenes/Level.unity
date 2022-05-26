@@ -1634,7 +1634,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tileGrass: {fileID: 7833122367452058934, guid: fa2e18018c1d9d748aa46de657100d9e, type: 3}
-  healer: {fileID: 6587827534205097687, guid: bf2302daad67f9945a3eec86e2bfcf29, type: 3}
+  healer: {fileID: 6587827534205097687, guid: 672e0191dcaeceb409c001913c66e1d0, type: 3}
   floors:
   - {fileID: 7833122367452058934, guid: fa2e18018c1d9d748aa46de657100d9e, type: 3}
   walls:

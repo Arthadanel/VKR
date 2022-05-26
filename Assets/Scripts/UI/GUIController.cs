@@ -27,7 +27,7 @@ namespace UI
             {
                 {ActionType.MOVE, movementHighlighterAsset},
                 {ActionType.ATTACK, attackHighlighterAsset},
-                {ActionType.BUFF, buffHighlighterAsset}
+                {ActionType.SPECIAL, buffHighlighterAsset}
             };
         }
 

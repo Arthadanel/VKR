@@ -24,6 +24,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3773320231232262374, guid: d39f81dc46274cb499cbde4ba24f9b8b, type: 3}
+      propertyPath: unitType
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3773320231232262374, guid: d39f81dc46274cb499cbde4ba24f9b8b, type: 3}
       propertyPath: specialAction
       value: taunt
       objectReference: {fileID: 0}

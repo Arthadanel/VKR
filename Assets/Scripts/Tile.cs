@@ -60,21 +60,23 @@ public class Tile : MonoBehaviour
         _attackHindrance = attackHindrance;
     }
 
+    public Unit GetCurrentUnit()
+    {
+        return _currentUnit;
+    }
+
     public void MoveTo(Unit unit)
     {
-        if (IsOccupied)
-        {
-            bool fightSuccessful = unit.Fight(_currentUnit);
-            if (fightSuccessful)
-            {
-                _currentUnit = unit;
-                unit.Coordinates = _coordinates;
-            }
-            return;
-        }
+        LevelController.GetTileAtCoordinates(unit.Coordinates).GetTileData().Vacate();
         IsOccupied = true;
         _currentUnit = unit;
         unit.Coordinates = _coordinates;
+    }
+
+    private void Vacate()
+    {
+        IsOccupied = false;
+        _currentUnit = null;
     }
 
     public void AddHighlighter(GameObject highlighter)
@@ -107,11 +109,7 @@ public class Tile : MonoBehaviour
         if (LevelController.IsUnitSelected)
         {
             if (_highlighter is null) return;
-            
-            //todo
-            
-            GUIController.DeactivateHighlights();
-            LevelController.GetSelectedUnit().Coordinates = _coordinates;
+            LevelController.GetSelectedUnit().InteractWith(this);
         }
     }
 }

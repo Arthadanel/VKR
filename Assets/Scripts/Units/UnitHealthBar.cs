@@ -13,8 +13,10 @@ namespace Units
             return _maxHP;
         }
 
-        public void ChangeHP(int value)
+        public bool ChangeHP(int value)
         {
+            if (_currentHP == _maxHP && value > 0)
+                return false;
             _currentHP += value;
             if (_currentHP > _maxHP)
                 _currentHP = _maxHP;
@@ -25,6 +27,12 @@ namespace Units
 
             float ratio = (float)_currentHP / _maxHP;
             filler.transform.localScale = new Vector3(ratio,1,1);
+            return true;
+        }
+
+        public int GetCurrentHP()
+        {
+            return _currentHP;
         }
     }
 }

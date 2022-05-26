@@ -45,8 +45,8 @@ namespace UI
         {
             //TileNode.ResetMaxCost();
             TileNode start = LevelController.GetTileAtCoordinates(_unit.Coordinates);
-            List<TileNode> reachableTiles = start.GetTilesInRange(range);
-            reachableTiles = reachableTiles.Distinct().ToList();
+            List<TileNode> reachableTiles = start.GetTilesInRange(range, 
+                highlightType != ActionType.MOVE, highlightType != ActionType.ATTACK);
             start.GetTileData().ClearHighlighter();
             
             GUIController.ActivateHighlights(reachableTiles,highlightType);
@@ -57,6 +57,7 @@ namespace UI
             if (cancelBtn.interactable) return;
             
             _unit.SelectedAction = ActionType.MOVE;
+            
             HighlightTilesInRange(_unit.GetMovement(),_unit.SelectedAction);
             HighlightButton(moveBtn);
         }
@@ -66,6 +67,7 @@ namespace UI
             if (cancelBtn.interactable) return;
             
             _unit.SelectedAction = ActionType.ATTACK;
+            
             HighlightTilesInRange(1,_unit.SelectedAction);
             HighlightButton(attackBtn);
         }
@@ -73,9 +75,10 @@ namespace UI
         public void OnSpecialAction()
         {
             if (cancelBtn.interactable) return;
-
-            _unit.SelectedAction = _unit.GetUnitType() == UnitType.DAMAGE ? ActionType.ATTACK : ActionType.BUFF;
-            HighlightTilesInRange(_unit.GetSpecialRange(),_unit.SelectedAction);
+            
+            _unit.SelectedAction = ActionType.SPECIAL;
+            
+            HighlightTilesInRange(_unit.GetSpecialRange(),_unit.GetSpecialType());
             HighlightButton(specialBtn);
         }
 

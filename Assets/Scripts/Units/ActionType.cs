@@ -5,6 +5,6 @@
         NONE,
         ATTACK,
         MOVE,
-        BUFF
+        SPECIAL
     }
 }

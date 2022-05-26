@@ -9,7 +9,6 @@ namespace Units
     {
         public static void Move(Unit unit, Coordinates start, Coordinates end)
         {
-            LevelController.DeactivateUnitSelection();
             unit.transform.position = end.GetVector3(LevelMap.UnitLayer);
         }
     }

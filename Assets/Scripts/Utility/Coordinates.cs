@@ -43,5 +43,10 @@ namespace Utility
         {
             return "row: " + Row + "\tcolumn: " + Column;
         }
+
+        public int Distance(Coordinates other)
+        {
+            return Math.Abs(Row - other.Row) + Math.Abs(Column - other.Column);
+        }
     }
 }
