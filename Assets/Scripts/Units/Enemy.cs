@@ -8,7 +8,7 @@ namespace Units
 {
     public class Enemy:Unit
     {
-        public static readonly int AI_DETECTION_RADIUS = GameSettings.IS_DIFFICULT ? 10 : 7;
+        public static readonly int AI_DETECTION_RADIUS = SaveData.IS_DIFFICULT ? 10 : 7;
         // private void OnMouseDown()
         // {
         //     if (EventSystem.current.IsPointerOverGameObject()) return;

@@ -13,7 +13,7 @@ public class WorldMapGenerator : MonoBehaviour
     
     private void Awake()
     {
-        Random.InitState(GameSettings.SEED);
+        Random.InitState(SaveData.SEED);
     }
 
     private void Start()

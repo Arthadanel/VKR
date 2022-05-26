@@ -4,7 +4,6 @@ using Utility;
 public static class SelectedLevelData
 {
     private static Polygon _polygon;
-    private static Dictionary<Edge, Polygon> AdjustedLevels;
 
     public static void SelectLevel(Polygon polygon)
     {

@@ -95,7 +95,7 @@ public static class LevelController
     {
         _tileCount = tileCount;
 
-        MaxActionPoints = tileCount / (GameSettings.IS_DIFFICULT ? 25 : 14);
+        MaxActionPoints = tileCount / (SaveData.IS_DIFFICULT ? 25 : 14);
         ActionPoints = MaxActionPoints;
         _guiController.UpdateActionPoints(ActionPoints);
     }
@@ -146,7 +146,7 @@ public static class LevelController
         return _levelLayout[coordinates.X, coordinates.Y];
     }
 
-    //todo:currently ignoring AI taunting player units, fix
+    //todo:currently ignoring AI taunting player units, fix later
     public static bool MassSetPriorityTarget(Unit taunterUnit)
     {
         bool result = false;

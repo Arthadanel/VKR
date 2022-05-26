@@ -35,6 +35,7 @@ public class LevelMap : MonoBehaviour
         
         GenerateLevel();
         SpawnUnits();
+        
         BuildGraph();
 
         LevelController.SetLevelLayout(_map);
@@ -47,11 +48,15 @@ public class LevelMap : MonoBehaviour
         basicLayout = LayoutScale4(basicLayout);
         int lengthX = basicLayout.GetLength(0);
         int lengthY = basicLayout.GetLength(1);
-        
         _map = new TileNode[lengthX,lengthY];
 
-        List<LayoutTile> tiles = new List<LayoutTile>();
+        int layoutSize = GenerateInnerLayout(lengthX, lengthY, basicLayout);
+        
+        LevelController.SetTileCount(layoutSize);
+    }
 
+    private int GenerateInnerLayout(int lengthX, int lengthY, LayoutTile[,] basicLayout)
+    {
         int tileCount = 0;
 
         for (int x = 0; x < lengthX; x++)
@@ -61,26 +66,39 @@ public class LevelMap : MonoBehaviour
                 var value = basicLayout[x, y];
                 if (value.TileType == 0) continue;
                 tileCount++;
+                Tile tile;
                 
-                //todo
-                Tile tile = SpawnTile(x, y, value.TileType == 2 && value.TransitionEdge == null ? walls[0] : floors[0]);
+                //spawn outer wall
+                if (value.TileType == 2 && value.TransitionEdge == null)
+                    tile = SpawnTile(x, y, walls[0]);
+                else
+                {
+                    tile = SpawnTile(x, y, floors[0]);
+                }
                 
                 
                 _map[x, y] = new TileNode(tile);
             }
         }
-        
-        LevelController.SetTileCount(tileCount);
-    }
 
-    private void GenerateInnerLayout()
-    {
-        
+        return tileCount;
     }
 
     private void SpawnUnits()
     {
-        
+        int lengthX = _map.GetLength(0);
+        int lengthY = _map.GetLength(1);
+
+        for (int x = 0; x < lengthX; x++)
+        {
+            for (int y = 0; y < lengthY; y++)
+            {
+                if (_map[x, y] == null) continue;
+                Tile tile = _map[x, y].GetTileData();
+                if(tile.IsOccupied||tile.IsObstruction()) continue;
+                
+            }
+        }
     }
 
     private void BuildGraph()

@@ -26,12 +26,16 @@ public class Tile : MonoBehaviour
     }
     private TileType _tileType;
     private bool _isObstruction;
+    public bool IsObstruction()
+    {
+        return _isObstruction;
+    }
     public bool IsOccupied { get; private set; }
     private int _movementCost;
 
     public int GetMovementCost()
     {
-        return isObstruction || IsOccupied ? GameSettings.MOVE_LIMIT : _movementCost;
+        return IsObstruction() || IsOccupied ? GameSettings.MOVE_LIMIT : _movementCost;
     }
     private int _attackHindrance;
     public int GetAttackHindrance()
@@ -41,16 +45,16 @@ public class Tile : MonoBehaviour
 
     private Unit _currentUnit;
 
-    public void InitializeTile(Coordinates coordinates, TileType type, bool isObstruction = false)
-    {
-        _coordinates = coordinates;
-        _tileType = type;
-        //todo: set move cost based on tile type
-        _movementCost = 1;
-        _isObstruction = isObstruction;
-        //todo: set move cost based on tile type and obstruction property
-        _attackHindrance = 0;
-    }
+    // public void InitializeTile(Coordinates coordinates, TileType type, bool isObstruction = false)
+    // {
+    //     _coordinates = coordinates;
+    //     _tileType = type;
+    //     //todo: set move cost based on tile type
+    //     _movementCost = 1;
+    //     _isObstruction = isObstruction;
+    //     //todo: set move cost based on tile type and obstruction property
+    //     _attackHindrance = 0;
+    // }
     public void InitializeTilePrefab(Coordinates coordinates)
     {
         _coordinates = coordinates;

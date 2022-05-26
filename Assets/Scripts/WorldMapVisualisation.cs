@@ -180,7 +180,7 @@ public static class WorldMapVisualisation
     private static void Start()
     {
         List<Point> points = new List<Point>();
-        Random.InitState(GameSettings.SEED);
+        Random.InitState(SaveData.SEED);
         int pointCount = Random.Range(GameSettings.LEVEL_COUNT_MIN, GameSettings.LEVEL_COUNT_MAX + 1);
         for (int i = 0; i < pointCount; i++)
         {
