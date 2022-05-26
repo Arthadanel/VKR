@@ -18,12 +18,13 @@ namespace UI
         [SerializeField] private Button cancelBtn;
 
         private Unit _unit;
-        [SerializeField] private Color _highlightColor;
+        [SerializeField] private Color highlightColor;
 
         public void InitializeActionPanel(Unit unit)
         {
             _unit = unit;
-            moveCost.text = _unit.GetMovement().ToString();
+            moveCost.text = (_unit.GetMovement() > 1 ? (1 + unit.MovePenalty) + "-" : "") +
+                            (_unit.GetMovement() + unit.MovePenalty);
             attackName.text = "Attack (" + _unit.GetAttackPower() + ")";
             specialActionName.text = _unit.GetSpecialName()[0].ToString().ToUpper() +
                                      _unit.GetSpecialName().Substring(1) + " (" + _unit.GetSpecialAttackPower() + ")";
@@ -102,7 +103,7 @@ namespace UI
         {
             SetButtonsState(true);
             //button.interactable = true;
-            button.GetComponent<Image>().color =_highlightColor;
+            button.GetComponent<Image>().color =highlightColor;
         }
 
         private void ResetButtonColor()

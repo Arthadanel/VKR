@@ -39,6 +39,7 @@ namespace UI
         public void SetEnemyTurn(bool isEnemyTurn)
         {
             turnPanel.SetActive(isEnemyTurn);
+            actionPanel.SetActiveState(false);
         }
 
         public void ExitToMap()

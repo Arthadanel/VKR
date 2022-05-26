@@ -91,6 +91,12 @@ public class Tile : MonoBehaviour
         _highlighter = null;
         TileInteractionCost = GameSettings.MOVE_LIMIT;
     }
+
+    public void PlaceUnit(Unit unit)
+    {
+        unit.SetInitialCoordinates(Coordinates.X, Coordinates.Y);
+        IsOccupied = true;
+    }
     
 
     private void OnMouseEnter()

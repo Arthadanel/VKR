@@ -11,7 +11,7 @@ public class CameraController:MonoBehaviour
     [SerializeField] private bool keyboardMove = GameSettings.KEYBOARD_NAVIGATION_ENABLED;
 
     private Camera _camera;
-    private readonly float _borderMargin = 0.05f;
+    private readonly float _borderMargin = 0.01f;
 
     private void Start()
     {

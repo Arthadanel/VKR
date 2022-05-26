@@ -8,8 +8,10 @@ public class GameController:MonoBehaviour
     [SerializeField] private LevelMap _levelGen;
     [SerializeField] private Camera _camera;
     [SerializeField] private GUIController _guiController;
+    [SerializeField] private TurnController _turnController;
     [SerializeField] private GameObject tileSelectorAsset;
     [SerializeField] private GameObject unitSelectorAsset;
+    [SerializeField] private GameObject inputBlocker;
 
     private void Awake()
     {
@@ -28,6 +30,8 @@ public class GameController:MonoBehaviour
         LevelController.SetUnitSelector(unitSelector);
         
         LevelController.SetGUIController(_guiController);
+        LevelController.SetTurnController(_turnController);
+        LevelController.SetInputBlocker(inputBlocker);
     }
 
     private void SetCameraPosition()

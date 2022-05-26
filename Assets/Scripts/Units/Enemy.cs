@@ -8,6 +8,7 @@ namespace Units
 {
     public class Enemy:Unit
     {
+        public static readonly int AI_DETECTION_RADIUS = GameSettings.IS_DIFFICULT ? 10 : 7;
         // private void OnMouseDown()
         // {
         //     if (EventSystem.current.IsPointerOverGameObject()) return;
@@ -215,8 +216,8 @@ namespace Units
         private void MoveTowards(Tile tile)
         {
             CleanUp();
-            int signX = (Coordinates.Row - tile.Coordinates.Row) > 0 ? -1 : 1;
-            int signY = (Coordinates.Column - tile.Coordinates.Column) > 0 ? -1 : 1;
+            int signX = (Coordinates.X - tile.Coordinates.X) > 0 ? -1 : 1;
+            int signY = (Coordinates.Y - tile.Coordinates.Y) > 0 ? -1 : 1;
             Tile result;
             TileNode start = LevelController.GetTileAtCoordinates(Coordinates);
             List<TileNode> reachableTiles = start.GetTilesInRange(movement);
@@ -240,7 +241,7 @@ namespace Units
         {
             List<Tile> result = new List<Tile>();
             TileNode start = LevelController.GetTileAtCoordinates(Coordinates);
-            List<TileNode> reachableTiles = start.GetTilesInRange(GameSettings.AI_DETECTION_RADIUS);
+            List<TileNode> reachableTiles = start.GetTilesInRange(AI_DETECTION_RADIUS);
             _tilesToClean.AddRange(reachableTiles);
             foreach (var tile in reachableTiles)
             {

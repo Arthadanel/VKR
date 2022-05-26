@@ -8,6 +8,9 @@ namespace Units
 {
     public class Unit : MonoBehaviour
     {
+        public const int MOVE_COST = 2;
+        public const int ATTACK_COST = 2;
+        public const int SPECIAL_COST = 3;
         [SerializeField] protected string specialAction;
         [SerializeField] protected int power = 5;
         [SerializeField] protected int range = 1;
@@ -18,6 +21,7 @@ namespace Units
         protected Coordinates _coordinates;
         public ActionType SelectedAction { get; set; }
         public Unit Target { get; set; }
+        public int MovePenalty { get; private set; } = 0;
 
         private void Start()
         {
@@ -103,25 +107,35 @@ namespace Units
         public void InteractWith(Tile tile)
         {
             bool actionPerformed = false;
-            int apMultiplier = 1;
+            int actionCost = 0;
             switch (SelectedAction)
             {
                 case ActionType.MOVE:
                     tile.MoveTo(this);
+                    actionCost = tile.TileInteractionCost + MovePenalty;
+                    if (MovePenalty == 0)
+                    {
+                        MovePenalty = 1;
+                        LevelController.OnTurnPass += () =>
+                        {
+                            MovePenalty = 0;
+                        };
+                    }
                     actionPerformed = true;
                     break;
                 case ActionType.ATTACK:
                     actionPerformed = Fight(tile);
+                    actionCost = ATTACK_COST;
                     break;
                 case ActionType.SPECIAL:
                     actionPerformed = unitType == UnitType.DAMAGE ? Fight(tile) : SpecialAction(tile);
-                    apMultiplier = 2;
+                    actionCost = SPECIAL_COST;
                     break;
             }
 
             if (actionPerformed)
             {
-                LevelController.ConsumeActionPoints(tile.TileInteractionCost * apMultiplier);
+                LevelController.ConsumeActionPoints(actionCost);
                 LevelController.DeactivateUnitSelection();
             }
         }
