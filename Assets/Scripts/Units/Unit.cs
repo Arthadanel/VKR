@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using Utility;
@@ -11,10 +12,22 @@ namespace Units
         [SerializeField] protected int power = 5;
         [SerializeField] protected int range = 1;
         [SerializeField] protected int movement = 3;
+        [SerializeField] protected UnitType unitType = UnitType.DAMAGE;
         public UnitHealthBar HealthBar { private set; get; }
-
-        private float _powerModifier = 0.5f;
+        private Dictionary<UnitType, float> _powerModifiers;
         protected Coordinates _coordinates;
+        public ActionType SelectedAction { get; set; }
+
+        private void Start()
+        {
+            HealthBar = GetComponentInChildren<UnitHealthBar>();
+            _powerModifiers = new Dictionary<UnitType, float>
+            {
+                {UnitType.DAMAGE, 1f},
+                {UnitType.SUPPORT, 0.6f}
+            };
+        }
+        
         public Coordinates Coordinates
         {
             get => _coordinates;
@@ -25,6 +38,11 @@ namespace Units
             }
         }
 
+        public UnitType GetUnitType()
+        {
+            return unitType;
+        }
+
         public string GetSpecialName()
         {
             return specialAction;
@@ -32,7 +50,7 @@ namespace Units
 
         public int GetAttackPower()
         {
-            return specialAction == "attack" ? power : (int) (power * _powerModifier);
+            return (int) (power * _powerModifiers[unitType]);
         }
 
         public int GetMovement()
@@ -58,11 +76,6 @@ namespace Units
         protected virtual void SpecialAction()
         {
             //todo
-        }
-
-        private void Start()
-        {
-            HealthBar = GetComponentInChildren<UnitHealthBar>();
         }
 
         public void SetInitialCoordinates(int row, int column)

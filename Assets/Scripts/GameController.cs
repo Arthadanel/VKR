@@ -18,6 +18,7 @@ public class GameController:MonoBehaviour
 
     private void Start()
     {
+        LevelController.Reset();
         GameObject selector = Instantiate(tileSelectorAsset, Vector3.zero, Quaternion.identity);
         selector.SetActive(false);
         LevelController.SetTileSelector(selector);

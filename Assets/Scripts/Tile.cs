@@ -17,6 +17,7 @@ public class Tile : MonoBehaviour
     
     private Coordinates _coordinates;
     private GameObject _highlighter;
+    public int TileInteractionCost { get; set; }
 
     public Coordinates Coordinates
     {
@@ -86,6 +87,7 @@ public class Tile : MonoBehaviour
     {
         Destroy(_highlighter);
         _highlighter = null;
+        TileInteractionCost = GameSettings.MOVE_LIMIT;
     }
     
 
@@ -105,6 +107,9 @@ public class Tile : MonoBehaviour
         if (LevelController.IsUnitSelected)
         {
             if (_highlighter is null) return;
+            
+            //todo
+            
             GUIController.DeactivateHighlights();
             LevelController.GetSelectedUnit().Coordinates = _coordinates;
         }

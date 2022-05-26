@@ -33,6 +33,7 @@ public class LevelMap : MonoBehaviour
         int lengthX = basicLayout.GetLength(0);
         int lengthY = basicLayout.GetLength(1);
         _map = new TileNode[lengthX,lengthY];
+        int tileCount = 0;
         bool f = false;
 
         for (int x = 0; x < lengthX; x++)
@@ -40,6 +41,7 @@ public class LevelMap : MonoBehaviour
             for (int y = 0; y < lengthY; y++)
             {
                 if(!basicLayout[x,y])continue;
+                tileCount++;
                 Tile tile = PlaceTile(x,y,tileGrass);
                 _map[x, y] = new TileNode(tile);
                 if (!f)
@@ -64,6 +66,7 @@ public class LevelMap : MonoBehaviour
         }
 
         LevelController.SetLevelLayout(_map);
+        LevelController.SetTileCount(tileCount);
         if (OnMapGenerationFinished != null) OnMapGenerationFinished();
     }
 
@@ -72,6 +75,7 @@ public class LevelMap : MonoBehaviour
         Unit unit = Instantiate(prefab, new Vector3(x, y, UnitLayer), Quaternion.identity, gameObject.transform)
             .GetComponent<Unit>();
         unit.SetInitialCoordinates(x, y);
+        //todo:make tile with unit occupied
         return unit;
     }
     private Tile PlaceTile(int x, int y, GameObject prefab)

@@ -25,7 +25,8 @@ namespace UI
             _unit = unit;
             moveCost.text = _unit.GetMovement().ToString();
             attackName.text = "Attack (" + _unit.GetAttackPower() + ")";
-            specialActionName.text = _unit.GetSpecialName()[0].ToString().ToUpper() + _unit.GetSpecialName().Substring(1);
+            specialActionName.text = _unit.GetSpecialName()[0].ToString().ToUpper() +
+                                     _unit.GetSpecialName().Substring(1) + " (" + _unit.GetSpecialAttackPower() + ")";
             specialBtn.gameObject.SetActive(_unit.GetSpecialName() != "attack");
         }
 
@@ -42,8 +43,9 @@ namespace UI
 
         private void HighlightTilesInRange(int range, ActionType highlightType)
         {
+            //TileNode.ResetMaxCost();
             TileNode start = LevelController.GetTileAtCoordinates(_unit.Coordinates);
-            List<TileNode> reachableTiles = start.GetTilesInRange(range+1);
+            List<TileNode> reachableTiles = start.GetTilesInRange(range);
             reachableTiles = reachableTiles.Distinct().ToList();
             start.GetTileData().ClearHighlighter();
             
@@ -54,8 +56,8 @@ namespace UI
         {
             if (cancelBtn.interactable) return;
             
-            HighlightTilesInRange(_unit.GetMovement(),ActionType.MOVE);
-            
+            _unit.SelectedAction = ActionType.MOVE;
+            HighlightTilesInRange(_unit.GetMovement(),_unit.SelectedAction);
             HighlightButton(moveBtn);
         }
         
@@ -63,17 +65,17 @@ namespace UI
         {
             if (cancelBtn.interactable) return;
             
-            HighlightTilesInRange(1,ActionType.ATTACK);
-            
+            _unit.SelectedAction = ActionType.ATTACK;
+            HighlightTilesInRange(1,_unit.SelectedAction);
             HighlightButton(attackBtn);
         }
         
         public void OnSpecialAction()
         {
             if (cancelBtn.interactable) return;
-            
-            HighlightTilesInRange(_unit.GetSpecialRange(),ActionType.BUFF);
-            
+
+            _unit.SelectedAction = _unit.GetUnitType() == UnitType.DAMAGE ? ActionType.ATTACK : ActionType.BUFF;
+            HighlightTilesInRange(_unit.GetSpecialRange(),_unit.SelectedAction);
             HighlightButton(specialBtn);
         }
 

@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class TileNode
 {
-    private Tile _tile;
+    private readonly Tile _tile;
     private TileNode _left;
     private TileNode _top;
     private TileNode _right;
@@ -21,27 +21,82 @@ public class TileNode
         _bottom = bottom;
     }
 
-    public List<TileNode> GetTilesInRange(int maxCost, bool ignoreMovementCost = false, bool ignoreAttackHindrance = true)
+    public List<TileNode> GetTilesInRange(int maxCost, bool ignoreMovementCost = false,
+        bool ignoreAttackHindrance = true)
     {
         List<TileNode> result = new List<TileNode>();
 
-        int rangeCost = (ignoreMovementCost ? 1 : _tile.GetMovementCost()) + (ignoreAttackHindrance ? 0 : _tile.GetAttackHindrance());
-        int leftoverCost = maxCost - rangeCost;
-        //Debug.Log(rangeCost);
-        if (leftoverCost > 0)
+        if (_left != null)
         {
-            result.Add(this);
-            if (_left != null)
-                result.AddRange(_left.GetTilesInRange(leftoverCost, ignoreMovementCost, ignoreAttackHindrance));
-            if (_top != null)
-                result.AddRange(_top.GetTilesInRange(leftoverCost, ignoreMovementCost, ignoreAttackHindrance));
-            if (_right != null)
-                result.AddRange(_right.GetTilesInRange(leftoverCost, ignoreMovementCost, ignoreAttackHindrance));
-            if (_bottom != null)
-                result.AddRange(_bottom.GetTilesInRange(leftoverCost, ignoreMovementCost, ignoreAttackHindrance));
+            List<TileNode> left = _left.GetTilesInRangeRecursive(maxCost, 0, ignoreMovementCost, ignoreAttackHindrance);
+            result.AddRange(left);
         }
-        if(leftoverCost == 0)
-            result.Add(this);
+
+        if (_top != null)
+        {
+            List<TileNode> top = _top.GetTilesInRangeRecursive(maxCost, 0, ignoreMovementCost, ignoreAttackHindrance);
+            result.AddRange(top);
+        }
+
+        if (_right != null)
+        {
+            List<TileNode> right = _right.GetTilesInRangeRecursive(maxCost, 0, ignoreMovementCost, ignoreAttackHindrance);
+            result.AddRange(right);
+        }
+
+        if (_bottom != null)
+        {
+            List<TileNode> bottom = _bottom.GetTilesInRangeRecursive(maxCost, 0, ignoreMovementCost, ignoreAttackHindrance);
+            result.AddRange(bottom);
+        }
+
+        return result;
+    }
+
+    private List<TileNode> GetTilesInRangeRecursive(int maxCost, int previousCost, bool ignoreMovementCost = false,
+        bool ignoreAttackHindrance = true)
+    {
+        List<TileNode> result = new List<TileNode>();
+
+        int actionCost = (ignoreMovementCost ? 1 : _tile.GetMovementCost()) +
+                         (ignoreAttackHindrance ? 0 : _tile.GetAttackHindrance());
+        int cost = previousCost + actionCost;
+
+        if (cost > maxCost)
+            return result;
+
+        if (_tile.TileInteractionCost == 0 || _tile.TileInteractionCost > cost)
+            _tile.TileInteractionCost = cost;
+
+        result.Add(this);
+        
+        if (_left != null)
+        {
+            List<TileNode> left =
+                _left.GetTilesInRangeRecursive(maxCost, cost, ignoreMovementCost, ignoreAttackHindrance);
+            result.AddRange(left);
+        }
+
+        if (_top != null)
+        {
+            List<TileNode> top =
+                _top.GetTilesInRangeRecursive(maxCost, cost, ignoreMovementCost, ignoreAttackHindrance);
+            result.AddRange(top);
+        }
+
+        if (_right != null)
+        {
+            List<TileNode> right =
+                _right.GetTilesInRangeRecursive(maxCost, cost, ignoreMovementCost, ignoreAttackHindrance);
+            result.AddRange(right);
+        }
+
+        if (_bottom != null)
+        {
+            List<TileNode> bottom =
+                _bottom.GetTilesInRangeRecursive(maxCost, cost, ignoreMovementCost, ignoreAttackHindrance);
+            result.AddRange(bottom);
+        }
 
         return result;
     }

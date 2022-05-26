@@ -14,11 +14,14 @@ public static class LevelController
     
     private static Unit _selectedUnit;
     public static bool IsUnitSelected { get; private set; }
-
-    #region PassGameControllerValues
-    public static void SetLevelLayout(TileNode[,] map)
+    public static int MaxActionPoints { get; private set; }
+    private static int _actionPoints;
+    private static int _tileCount;
+    
+    public static void Reset()
     {
-        _levelLayout = map;
+        _selectedUnit = null;
+        IsUnitSelected = false;
     }
 
     public static void SetGUIController(GUIController guiController)
@@ -36,13 +39,24 @@ public static class LevelController
         _unitSelector = unitSelector;
     }
 
-    // public static void SetHighlighters(GameObject move, GameObject attack, GameObject path)
-    // {
-    //     _moveHighlighter = move;
-    //     _attackHighlighter = attack;
-    //     _pathHighlighter = path;
-    // }
-    #endregion
+    public static void SetLevelLayout(TileNode[,] map)
+    {
+        _levelLayout = map;
+    }
+
+    public static void SetTileCount(int tileCount)
+    {
+        _tileCount = tileCount;
+
+        MaxActionPoints = tileCount / (GameSettings.IS_DIFFICULT ? 33 : 25);
+        _actionPoints = MaxActionPoints;
+        _guiController.UpdateActionPoints(_actionPoints);
+    }
+
+    public static void ConsumeActionPoints(int ap)
+    {
+        _guiController.UpdateActionPoints(_actionPoints - ap);
+    }
 
     public static void PositionSelector(Coordinates coordinates)
     {

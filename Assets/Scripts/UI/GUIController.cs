@@ -11,6 +11,7 @@ namespace UI
     {
         [SerializeField] private ActionPanel actionPanel;
         [SerializeField] private GameObject turnPanel;
+        [SerializeField] private Text actionPointsCounter;
         
         [SerializeField] private GameObject movementHighlighterAsset;
         [SerializeField] private GameObject attackHighlighterAsset;
@@ -28,6 +29,11 @@ namespace UI
                 {ActionType.ATTACK, attackHighlighterAsset},
                 {ActionType.BUFF, buffHighlighterAsset}
             };
+        }
+
+        public void UpdateActionPoints(int actionPoints)
+        {
+            actionPointsCounter.text = actionPoints.ToString();
         }
 
         public void SetEnemyTurn(bool isEnemyTurn)
@@ -64,6 +70,7 @@ namespace UI
                 tile.GetTileData().ClearHighlighter();
             }
             _highlightedTiles = null;
+            LevelController.GetSelectedUnit().SelectedAction = ActionType.NONE;
         }
     }
 }
