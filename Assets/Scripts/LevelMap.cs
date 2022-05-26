@@ -7,7 +7,8 @@ using Utility;
 
 public class LevelMap : MonoBehaviour
 {
-    [SerializeField] GameObject tileGrass;
+    [SerializeField] private GameObject borderPrefab;
+    [SerializeField] private GameObject tileGrass;
     [SerializeField] private GameObject healer;
     [SerializeField] List<GameObject> floors;
     [SerializeField] List<GameObject> walls;
@@ -19,38 +20,73 @@ public class LevelMap : MonoBehaviour
     public static int TileLayer = 1;
     public static int UnitLayer = -3;
 
-    private List<GameObject> borders = new List<GameObject>();
-
     public static int CURRENT_LEVEL = 1;
     private TileNode[,] _map;
 
     public Action OnMapGenerationFinished;
+    private List<GameObject> borders = new List<GameObject>();
+    private List<Enemy> _enemies;
+    private List<Ally> _allies;
 
     private void Start()
     {
-        bool[,] basicLayout = SetBasicLayout();
+        //Pass actions
+        LevelController.GetEnemyList = GetEnemyList;
         
+        GenerateLevel();
+        SpawnUnits();
+        BuildGraph();
+
+        LevelController.SetLevelLayout(_map);
+        if (OnMapGenerationFinished != null) OnMapGenerationFinished();
+    }
+
+    private void GenerateLevel()
+    {
+        LayoutTile[,] basicLayout = SetBasicLayout();
+        basicLayout = LayoutScale4(basicLayout);
         int lengthX = basicLayout.GetLength(0);
         int lengthY = basicLayout.GetLength(1);
+        
         _map = new TileNode[lengthX,lengthY];
+
+        List<LayoutTile> tiles = new List<LayoutTile>();
+
         int tileCount = 0;
-        bool f = false;
 
         for (int x = 0; x < lengthX; x++)
         {
             for (int y = 0; y < lengthY; y++)
             {
-                if(!basicLayout[x,y])continue;
+                var value = basicLayout[x, y];
+                if (value.TileType == 0) continue;
                 tileCount++;
-                Tile tile = PlaceTile(x,y,tileGrass);
+                
+                //todo
+                Tile tile = SpawnTile(x, y, value.TileType == 2 && value.TransitionEdge == null ? walls[0] : floors[0]);
+                
+                
                 _map[x, y] = new TileNode(tile);
-                if (!f)
-                {
-                    f = true;
-                    PlaceUnit(x, y, healer);
-                }
             }
         }
+        
+        LevelController.SetTileCount(tileCount);
+    }
+
+    private void GenerateInnerLayout()
+    {
+        
+    }
+
+    private void SpawnUnits()
+    {
+        
+    }
+
+    private void BuildGraph()
+    {
+        int lengthX = _map.GetLength(0);
+        int lengthY = _map.GetLength(1);
 
         for (int x = 0; x < lengthX; x++)
         {
@@ -64,25 +100,43 @@ public class LevelMap : MonoBehaviour
                 _map[x, y].SetNeighbourTileNodes(left, top, right, bottom);
             }
         }
-
-        LevelController.SetLevelLayout(_map);
-        LevelController.SetTileCount(tileCount);
-        if (OnMapGenerationFinished != null) OnMapGenerationFinished();
     }
 
-    private Unit PlaceUnit(int x, int y, GameObject prefab)
+    private Unit SpawnUnit(Tile tile, GameObject prefab)
     {
-        Unit unit = Instantiate(prefab, new Vector3(x, y, UnitLayer), Quaternion.identity, gameObject.transform)
+        Unit unit = Instantiate(prefab, new Vector3(tile.Coordinates.X, tile.Coordinates.Y, UnitLayer), Quaternion.identity, gameObject.transform)
             .GetComponent<Unit>();
-        unit.SetInitialCoordinates(x, y);
-        //todo:make tile with unit occupied
+        tile.PlaceUnit(unit);
         return unit;
     }
-    private Tile PlaceTile(int x, int y, GameObject prefab)
+    private Tile SpawnTile(int x, int y, GameObject prefab)
     {
         Tile tile = Instantiate(prefab, new Vector3(x, y, TileLayer), Quaternion.identity, gameObject.transform).GetComponent<Tile>();
         tile.InitializeTilePrefab(new Coordinates(x, y));
+        borders.Add(Instantiate(borderPrefab, new Vector3(x, y, BorderLayer), Quaternion.identity, gameObject.transform));
         return tile;
+    }
+
+    //scale layout so each single tile equals occupies 4 tiles
+    private T[,] LayoutScale4<T>(T[,] original)
+    {
+        const int n = 2;
+        int lengthX = original.GetLength(0);
+        int lengthY = original.GetLength(1);
+        T[,] scaled = new T[lengthX * n, lengthY * n];
+        for (int x = 0; x < lengthX; x++)
+        {
+            for (int y = 0; y < lengthY; y++)
+            {
+                T value = original[x, y];
+                scaled[x * n, y * n] = value;
+                scaled[x * n, y * n + 1] = value;
+                scaled[x * n + 1, y * n] = value;
+                scaled[x * n + 1, y * n + 1] = value;
+            }
+        }
+
+        return scaled;
     }
 
     public Vector3 GetCentralPoint()
@@ -93,6 +147,11 @@ public class LevelMap : MonoBehaviour
         return result;
     }
 
+    private List<Enemy> GetEnemyList()
+    {
+        return _enemies;
+    }
+
     public void SwitchBorderVisibility()
     {
         foreach (GameObject border in borders)
@@ -100,8 +159,8 @@ public class LevelMap : MonoBehaviour
             border.SetActive(!border.activeSelf);
         }
     }
-    
-    public bool[,] SetBasicLayout()
+
+    private LayoutTile[,] SetBasicLayout()
     {
         List<Point> convexHull = SelectedLevelData.GetConvexHull();
         float minX = convexHull[0].X;   //x padding
@@ -134,55 +193,62 @@ public class LevelMap : MonoBehaviour
         
         //============================
 
-        bool[,] layout = new bool[lengthX, lengthY];
-        bool[,] filledLayout = new bool[lengthX, lengthY];
+        LayoutTile[,] layout = new LayoutTile[lengthX, lengthY];
+        LayoutTile[,] filledLayout = new LayoutTile[lengthX, lengthY];
 
         //generate outline
         int vertexCount = adjustedConvexHull.Count;
         for (int i = 0; i < vertexCount; i++)
         {
-            LineBresenham(adjustedConvexHull[i], adjustedConvexHull[(i + 1)%vertexCount], layout);
+            int index1 = i;
+            int index2 = (i + 1) % vertexCount;
+            Edge edge = SelectedLevelData.GetEdge(convexHull[index1], convexHull[index2]);
+            if (edge.GetAdjacentPolygonCount() < 2) edge = null;
+            LineBresenham(adjustedConvexHull[index1], adjustedConvexHull[index2], layout, edge);
         }
         
         for (int x = 0; x < lengthX; x++)
         {
             for (int y = 0; y < lengthY; y++)
             {
-                filledLayout[x,y] = layout[x,y];
+                filledLayout[x, y] = layout[x,y];
             }
         }
 
-        FillOutline(filledLayout, lengthX, lengthY);
-        
-        //todo: fix it properly
+        filledLayout = FillOutline(filledLayout, lengthX, lengthY);
+
         for (int x = 0; x < lengthX; x++)
         {
             for (int y = 0; y < lengthY; y++)
             {
-                if (layout[x, y])
-                    filledLayout[x, y] = true;
+                if (layout[x, y].TileType > 0)
+                    filledLayout[x, y] = layout[x, y];
+                else if (filledLayout[x, y].TileType > 0)
+                {
+                    filledLayout[x, y].TileType = 1;
+                }
             }
         }
 
         return filledLayout;
     }
 
-    private void FillOutline(bool[,] layout, int lengthX, int lengthY)
+    private LayoutTile[,] FillOutline(LayoutTile[,] layout, int lengthX, int lengthY)
     {
         for (int x = 0; x < lengthX; x++)
         {
             int enteredBorderCounter = 0;
             bool inPolygon = false;
-            bool previous = false;
+            LayoutTile previous = new LayoutTile(0);
             bool lastWasChanged = false;
             int lastBorderFlag = -1;
             for (int y = 0; y < lengthY; y++)
             {
-                bool current = layout[x, y];
+                LayoutTile current = layout[x, y];
                 
-                if (current != previous)
+                if (current.TileType != previous.TileType)
                 {
-                    if (current)
+                    if (current.TileType >0)
                     {
                         enteredBorderCounter++;
                         lastBorderFlag = y;
@@ -196,29 +262,31 @@ public class LevelMap : MonoBehaviour
                     }
                 }
 
-                layout[x, y] = inPolygon;
-                previous = inPolygon;
+                layout[x, y] = inPolygon ? new LayoutTile(2) : new LayoutTile(0);
+                previous = inPolygon ?new LayoutTile(2) : new LayoutTile(0);
 
-                if (current && previous && lastWasChanged)
+                if (current.TileType >0 && previous.TileType >0 && lastWasChanged)
                 {
                     enteredBorderCounter++;
                     inPolygon = false;
                 }
 
-                lastWasChanged = current != layout[x, y];
+                lastWasChanged = current.TileType != layout[x, y].TileType;
                 
                 if (y == lengthY - 1 && inPolygon && enteredBorderCounter % 2 == 1 && lastWasChanged)
                 {
                     for (int i = y; i > lastBorderFlag; i--)
                     {
-                        layout[x, i] = false;
+                        layout[x, i].TileType = 0;
                     }
                 }
             }
         }
+
+        return layout;
     }
     
-    void LineBresenham(Point point1, Point point2, bool[,] layout)
+    void LineBresenham(Point point1, Point point2, LayoutTile[,] layout, Edge edge)
     {
         int x = (int) point1.X;
         int y = (int) point1.Y;
@@ -239,7 +307,10 @@ public class LevelMap : MonoBehaviour
 
         while (i <= deltaX)
         {
-            layout[x, y] = true;
+            layout[x, y] = new LayoutTile(2)
+            {
+                TransitionEdge = edge
+            };
 
             while (e >= 0)
             {
@@ -258,15 +329,5 @@ public class LevelMap : MonoBehaviour
             e += 2 * deltaY;
             i++;
         }
-    }
-
-    public void GenerateInnerLayout()
-    {
-        
-    }
-
-    public void PlaceUnits()
-    {
-        
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UI;
 using Units;
 using UnityEngine;
@@ -8,13 +9,49 @@ public static class LevelController
 {
     private static GameObject _tileSelector;
     private static GameObject _unitSelector;
+    private static GameObject _inputBlocker;
     
     private static TileNode[,] _levelLayout;
     private static GUIController _guiController;
+    private static TurnController _turnController;
     
     private static Unit _selectedUnit;
     public static bool IsUnitSelected { get; private set; }
     public static int MaxActionPoints { get; private set; }
+
+    public static Action OnTurnPass;
+    public static Func<List<Enemy>> GetEnemyList;
+
+    public static int ActionPoints
+    {
+        get => _actionPoints;
+        set
+        {
+            _actionPoints = value;
+            if (value <= 0)
+            {
+                _turnController.SwitchTurn();
+            }
+        }
+    }
+
+    //public static List<Enemy> Enemies { get; set; }
+
+    public static void PassTurn()
+    {
+        ActionPoints = MaxActionPoints;
+        _guiController.SetEnemyTurn(!_turnController.IsPlayerTurn);
+        AllowGameInput(_turnController.IsPlayerTurn);
+        OnTurnPass();
+        OnTurnPass = () => { };
+    }
+
+    private static void AllowGameInput(bool allow)
+    {
+        _inputBlocker.SetActive(!allow);
+        _tileSelector.SetActive(allow);
+    }
+
     private static int _actionPoints;
     private static int _tileCount;
     
@@ -28,10 +65,20 @@ public static class LevelController
     {
         _guiController = guiController;
     }
+    
+    public static void SetTurnController(TurnController turnController)
+    {
+        _turnController = turnController;
+    }
 
     public static void SetTileSelector(GameObject selector)
     {
         _tileSelector = selector;
+    }
+
+    public static void SetInputBlocker(GameObject inputBlocker)
+    {
+        _inputBlocker = inputBlocker;
     }
 
     public static void SetUnitSelector(GameObject unitSelector)
@@ -49,13 +96,14 @@ public static class LevelController
         _tileCount = tileCount;
 
         MaxActionPoints = tileCount / (GameSettings.IS_DIFFICULT ? 25 : 14);
-        _actionPoints = MaxActionPoints;
-        _guiController.UpdateActionPoints(_actionPoints);
+        ActionPoints = MaxActionPoints;
+        _guiController.UpdateActionPoints(ActionPoints);
     }
 
     public static void ConsumeActionPoints(int ap)
     {
-        _guiController.UpdateActionPoints(_actionPoints - ap);
+        ActionPoints -= ap;
+        _guiController.UpdateActionPoints(ActionPoints);
     }
 
     public static void PositionSelector(Coordinates coordinates)
@@ -95,7 +143,7 @@ public static class LevelController
 
     public static TileNode GetTileAtCoordinates(Coordinates coordinates)
     {
-        return _levelLayout[coordinates.Row, coordinates.Column];
+        return _levelLayout[coordinates.X, coordinates.Y];
     }
 
     //todo:currently ignoring AI taunting player units, fix

@@ -9,5 +9,6 @@
     WOOD,   //coals
     STONE,  //stone
     FOREST, //earth
-    BRIDGE  //water
+    BRIDGE,  //water
+    DOOR
 }

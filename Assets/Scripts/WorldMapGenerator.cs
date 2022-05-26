@@ -78,7 +78,6 @@ public class WorldMapGenerator : MonoBehaviour
             var triangleMesh = Instantiate(mapSegmentPrefab, transform);
             WorldMapVisualisation.DrawPolygon(polygon, triangleMesh);
             triangleMesh.GetComponent<MapSegment>().SetPolygon(polygon);
-            Debug.Log(polygon.LevelNumber);
         }
     }
 

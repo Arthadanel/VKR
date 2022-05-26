@@ -18,7 +18,7 @@ public class Tile : MonoBehaviour
     private Coordinates _coordinates;
     private GameObject _highlighter;
     public int TileInteractionCost { get; set; }
-
+    public Edge Edge = null;
     public Coordinates Coordinates
     {
         get => _coordinates;
