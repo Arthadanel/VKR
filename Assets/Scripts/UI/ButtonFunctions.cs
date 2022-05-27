@@ -47,6 +47,10 @@ namespace UI
         {
             
         }
+        public void CreateSaveSlot(int slotIndex)
+        {
+            
+        }
 
         public void SelectSaveSlot(int slotIndex)
         {
