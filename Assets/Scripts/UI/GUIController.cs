@@ -86,7 +86,7 @@ namespace UI
         IEnumerator ShowMessage(string message)
         {
             messageDisplay.SetActive(true);
-            messageDisplay.GetComponent<Text>().text = message;
+            messageDisplay.GetComponentInChildren<Text>().text = message;
             yield return new WaitForSeconds(1f);
             messageDisplay.SetActive(false);
         }
