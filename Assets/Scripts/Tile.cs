@@ -100,6 +100,7 @@ public class Tile : MonoBehaviour
     {
         unit.SetInitialCoordinates(Coordinates.X, Coordinates.Y);
         IsOccupied = true;
+        _currentUnit = unit;
     }
     
 
@@ -114,8 +115,7 @@ public class Tile : MonoBehaviour
     {
         if (EventSystem.current.IsPointerOverGameObject()) return;
 
-        if(_tileType!=TileType.GRASS)
-            return;
+        if(isObstruction) return;
         if (LevelController.IsUnitSelected)
         {
             if (_highlighter is null) return;

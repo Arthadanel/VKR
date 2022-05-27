@@ -37,5 +37,6 @@ public class GameController:MonoBehaviour
     private void SetCameraPosition()
     {
         _camera.transform.position = _levelGen.GetCentralPoint();
+        _camera.GetComponent<CameraController>().SetCameraStartCoordinates();
     }
 }

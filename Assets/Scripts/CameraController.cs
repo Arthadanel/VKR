@@ -11,11 +11,21 @@ public class CameraController:MonoBehaviour
     [SerializeField] private bool keyboardMove = SaveData.KEYBOARD_NAVIGATION_ENABLED;
 
     private Camera _camera;
-    private readonly float _borderMargin = 0.01f;
+    private readonly float _borderMargin = 0.025f;
+
+    private float xStart;
+    private float yStart;
+
+    public void SetCameraStartCoordinates()
+    {
+        xStart = _camera.transform.position.x;
+        yStart = _camera.transform.position.y;
+    }
 
     private void Start()
     {
         _camera = gameObject.GetComponent<Camera>();
+        SetCameraStartCoordinates();
     }
 
     private void Update()
@@ -53,7 +63,13 @@ public class CameraController:MonoBehaviour
     private void Move(float x, float y)
     {
         Vector3 direction = transform.right * x + transform.up * y;
-        transform.position += direction * moveSpeed * Time.deltaTime * _camera.orthographicSize/5;
+        var position = transform.position;
+        position += direction * moveSpeed * Time.deltaTime * _camera.orthographicSize/5;
+
+        if (Math.Abs(xStart - position.x) > 20 || Math.Abs(yStart - position.y) > 20)
+            return;
+        
+        transform.position = position;
     }
 
     private void Zoom()

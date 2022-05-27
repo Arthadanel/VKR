@@ -58,7 +58,7 @@ public static class WorldMapVisualisation
         polygonCollider.points = vertices2D;
     }
 
-    private static void SetMeshColor(Color color, Mesh mesh)
+    public static void SetMeshColor(Color color, Mesh mesh)
     {
         Color32[] colors = new Color32[mesh.vertexCount];
         for (int i = 0; i < colors.Length; i++)

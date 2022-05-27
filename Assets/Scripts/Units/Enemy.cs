@@ -63,7 +63,7 @@ namespace Units
                 tileNode.GetTileData().TileInteractionCost = GameSettings.MOVE_LIMIT;
             }
 
-            _tilesToClean = null;
+            _tilesToClean = new List<TileNode>();
         }
 
         private void WarriorScenario()

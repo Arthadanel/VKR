@@ -34,6 +34,10 @@ public static class LevelController
             }
         }
     }
+    public static void DisplayMessage(string message)
+    {
+        _guiController.DisplayMessage(message);
+    }
 
     //public static List<Enemy> Enemies { get; set; }
 
@@ -94,8 +98,7 @@ public static class LevelController
     public static void SetTileCount(int tileCount)
     {
         _tileCount = tileCount;
-
-        MaxActionPoints = tileCount / (SaveData.IS_DIFFICULT ? 25 : 14);
+        MaxActionPoints = tileCount / (SaveData.IS_DIFFICULT ? GameSettings.TILE_AP_PERCENTAGE_HARD : GameSettings.TILE_AP_PERCENTAGE);
         ActionPoints = MaxActionPoints;
         _guiController.UpdateActionPoints(ActionPoints);
     }

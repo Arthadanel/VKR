@@ -9,6 +9,11 @@ public static class SelectedLevelData
     {
         _polygon = polygon;
     }
+
+    public static Polygon GetLevelPolygon()
+    {
+        return _polygon;
+    }
     
     public static Edge GetEdge(Point a, Point b)
     {

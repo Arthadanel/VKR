@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Units;
 using UnityEngine;
@@ -12,6 +13,7 @@ namespace UI
         [SerializeField] private ActionPanel actionPanel;
         [SerializeField] private GameObject turnPanel;
         [SerializeField] private Text actionPointsCounter;
+        [SerializeField] private GameObject messageDisplay;
         
         [SerializeField] private GameObject movementHighlighterAsset;
         [SerializeField] private GameObject attackHighlighterAsset;
@@ -72,6 +74,21 @@ namespace UI
             }
             _highlightedTiles = null;
             LevelController.GetSelectedUnit().SelectedAction = ActionType.NONE;
+        }
+
+        private Coroutine _messageCoroutine;
+        public void DisplayMessage(string message)
+        {
+            if (_messageCoroutine != null) StopCoroutine(_messageCoroutine);
+            _messageCoroutine = StartCoroutine(ShowMessage(message));
+        }
+
+        IEnumerator ShowMessage(string message)
+        {
+            messageDisplay.SetActive(true);
+            messageDisplay.GetComponent<Text>().text = message;
+            yield return new WaitForSeconds(1f);
+            messageDisplay.SetActive(false);
         }
     }
 }

@@ -4,12 +4,12 @@ using System.Collections.Generic;
 using Units;
 using UnityEngine;
 using Utility;
+using Random = UnityEngine.Random;
 
 public class LevelMap : MonoBehaviour
 {
     [SerializeField] private GameObject borderPrefab;
-    [SerializeField] private GameObject tileGrass;
-    [SerializeField] private GameObject healer;
+    [SerializeField] private GameObject transition;
     [SerializeField] List<GameObject> floors;
     [SerializeField] List<GameObject> walls;
     [SerializeField] List<GameObject> destructibles;
@@ -25,8 +25,10 @@ public class LevelMap : MonoBehaviour
 
     public Action OnMapGenerationFinished;
     private List<GameObject> borders = new List<GameObject>();
-    private List<Enemy> _enemies;
-    private List<Ally> _allies;
+    private List<Enemy> _enemies = new List<Enemy>();
+    private List<Ally> _allies = new List<Ally>();
+    
+    private int _layoutSize;
 
     private void Start()
     {
@@ -45,19 +47,21 @@ public class LevelMap : MonoBehaviour
     private void GenerateLevel()
     {
         LayoutTile[,] basicLayout = SetBasicLayout();
-        basicLayout = LayoutScale4(basicLayout);
+        //basicLayout = LayoutScale4(basicLayout);
         int lengthX = basicLayout.GetLength(0);
         int lengthY = basicLayout.GetLength(1);
         _map = new TileNode[lengthX,lengthY];
 
-        int layoutSize = GenerateInnerLayout(lengthX, lengthY, basicLayout);
+        _layoutSize = GenerateInnerLayout(lengthX, lengthY, basicLayout);
         
-        LevelController.SetTileCount(layoutSize);
+        LevelController.SetTileCount(_layoutSize);
     }
 
     private int GenerateInnerLayout(int lengthX, int lengthY, LayoutTile[,] basicLayout)
     {
+        HashSet<int> spawnedConnections = new HashSet<int>();
         int tileCount = 0;
+        int arraySize = lengthX * lengthY;
 
         for (int x = 0; x < lengthX; x++)
         {
@@ -66,16 +70,28 @@ public class LevelMap : MonoBehaviour
                 var value = basicLayout[x, y];
                 if (value.TileType == 0) continue;
                 tileCount++;
-                Tile tile;
+                Tile tile = null;
                 
                 //spawn outer wall
                 if (value.TileType == 2 && value.TransitionEdge == null)
                     tile = SpawnTile(x, y, walls[0]);
+                else if (value.TileType == 2)
+                {
+                    int level = value.TransitionEdge.GetOtherAdjPolygon(SelectedLevelData.GetLevelPolygon())
+                        .LevelNumber;
+                    if (spawnedConnections.Add(level))
+                    {
+                        tile = SpawnTransitionTile(x, y, level, transition);
+                    }
+                }
                 else
                 {
-                    tile = SpawnTile(x, y, floors[0]);
+                    int check = Random.Range(0, arraySize);
+                    if (check < arraySize / 25)
+                        tile = SpawnTile(x, y, destructibles[0]);
                 }
                 
+                tile ??= SpawnTile(x, y, floors[0]);
                 
                 _map[x, y] = new TileNode(tile);
             }
@@ -86,8 +102,19 @@ public class LevelMap : MonoBehaviour
 
     private void SpawnUnits()
     {
+        int ap = _layoutSize / (SaveData.IS_DIFFICULT
+            ? GameSettings.TILE_AP_PERCENTAGE_HARD
+            : GameSettings.TILE_AP_PERCENTAGE);
+        int maxAllies = ap / 4;
+        int maxEnemies = (int) (ap / 4 * (SaveData.IS_DIFFICULT
+            ? GameSettings.ENEMY_UNIT_MULTIPLIER_HARD
+            : GameSettings.ENEMY_UNIT_MULTIPLIER));
         int lengthX = _map.GetLength(0);
         int lengthY = _map.GetLength(1);
+
+        int chanceThreshold = 3;
+        int chanceA = chanceThreshold;
+        int chanceE = _layoutSize + chanceThreshold;
 
         for (int x = 0; x < lengthX; x++)
         {
@@ -95,8 +122,24 @@ public class LevelMap : MonoBehaviour
             {
                 if (_map[x, y] == null) continue;
                 Tile tile = _map[x, y].GetTileData();
-                if(tile.IsOccupied||tile.IsObstruction()) continue;
-                
+                if (tile.IsObstruction() || tile.IsOccupied) continue;
+                if(_allies.Count<maxAllies)
+                {
+                    int check = Random.Range(0, 1 + chanceA++);
+                    if (check <= chanceThreshold)
+                    {
+                        _allies.Add(SpawnUnit(tile,allies[Random.Range(0,allies.Count)]) as Ally);
+                    }
+                }
+
+                if (_allies.Count > maxAllies / 2 && _enemies.Count < maxEnemies)
+                {
+                    int check = Random.Range(0, chanceThreshold + chanceE--);
+                    if (check <= chanceThreshold * GameSettings.ENEMY_UNIT_MULTIPLIER)
+                    {
+                        _enemies.Add(SpawnUnit(tile, enemies[Random.Range(0, enemies.Count)]) as Enemy);
+                    }
+                }
             }
         }
     }
@@ -131,6 +174,13 @@ public class LevelMap : MonoBehaviour
     {
         Tile tile = Instantiate(prefab, new Vector3(x, y, TileLayer), Quaternion.identity, gameObject.transform).GetComponent<Tile>();
         tile.InitializeTilePrefab(new Coordinates(x, y));
+        borders.Add(Instantiate(borderPrefab, new Vector3(x, y, BorderLayer), Quaternion.identity, gameObject.transform));
+        return tile;
+    }
+    private Tile SpawnTransitionTile(int x, int y, int connectedLevel, GameObject prefab)
+    {
+        TransitionTile tile = Instantiate(prefab, new Vector3(x, y, TileLayer), Quaternion.identity, gameObject.transform).GetComponent<TransitionTile>();
+        tile.InitializeTilePrefab(new Coordinates(x, y),connectedLevel);
         borders.Add(Instantiate(borderPrefab, new Vector3(x, y, BorderLayer), Quaternion.identity, gameObject.transform));
         return tile;
     }
