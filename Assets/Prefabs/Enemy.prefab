@@ -101,6 +101,7 @@ MonoBehaviour:
   power: 10
   range: 1
   movement: 2
+  health: 48
   unitType: 0
 --- !u!61 &1728967377930857468
 BoxCollider2D:

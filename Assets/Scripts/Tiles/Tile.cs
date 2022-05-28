@@ -15,7 +15,7 @@ namespace Tiles
     
         private Coordinates _coordinates;
         private GameObject _highlighter;
-        public int TileInteractionCost { get; set; }
+        public int TileInteractionCost { get; set; } = GameSettings.MOVE_LIMIT;
         public Edge Edge = null;
         public Coordinates Coordinates
         {
@@ -75,7 +75,7 @@ namespace Tiles
             unit.Coordinates = _coordinates;
         }
 
-        private void Vacate()
+        public void Vacate()
         {
             IsOccupied = false;
             _currentUnit = null;
@@ -100,7 +100,6 @@ namespace Tiles
             IsOccupied = true;
             _currentUnit = unit;
         }
-    
 
         private void OnMouseEnter()
         {
@@ -111,6 +110,7 @@ namespace Tiles
 
         private void OnMouseDown()
         {
+            Debug.Log(TileInteractionCost);
             if (EventSystem.current.IsPointerOverGameObject()) return;
 
             if(isObstruction) return;

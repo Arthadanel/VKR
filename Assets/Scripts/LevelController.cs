@@ -46,9 +46,10 @@ public static class LevelController
     public static void PassTurn()
     {
         ActionPoints = MaxActionPoints;
+        _guiController.UpdateActionPoints(ActionPoints);
         _guiController.SetEnemyTurn(!_turnController.IsPlayerTurn);
         AllowGameInput(_turnController.IsPlayerTurn);
-        OnTurnPass();
+        if (OnTurnPass != null) OnTurnPass();
         OnTurnPass = () => { };
     }
 

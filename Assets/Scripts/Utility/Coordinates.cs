@@ -41,7 +41,7 @@ namespace Utility
 
         public override string ToString()
         {
-            return "X: " + X + "\tY: " + Y;
+            return "[" + X + ", " + Y +"]";
         }
 
         public int Distance(Coordinates other)

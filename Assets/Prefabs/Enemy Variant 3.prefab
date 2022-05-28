@@ -16,6 +16,10 @@ PrefabInstance:
       value: 3
       objectReference: {fileID: 0}
     - target: {fileID: -9178452022380725845, guid: 4748714866b4f134b9edaa4870bf82a9, type: 3}
+      propertyPath: health
+      value: 88
+      objectReference: {fileID: 0}
+    - target: {fileID: -9178452022380725845, guid: 4748714866b4f134b9edaa4870bf82a9, type: 3}
       propertyPath: movement
       value: 1
       objectReference: {fileID: 0}

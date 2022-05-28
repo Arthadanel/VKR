@@ -9,13 +9,14 @@ namespace Units
 {
     public class Unit : MonoBehaviour
     {
-        public const int MOVE_COST = 2;
+        public const int MOVE_COST = 1;
         public const int ATTACK_COST = 2;
         public const int SPECIAL_COST = 3;
         [SerializeField] protected string specialAction;
         [SerializeField] protected int power = 5;
         [SerializeField] protected int range = 1;
         [SerializeField] protected int movement = 3;
+        [SerializeField] protected int health = 48;
         [SerializeField] protected UnitType unitType = UnitType.DAMAGE;
         public UnitHealthBar HealthBar { private set; get; }
         private Dictionary<UnitType, float> _powerModifiers;
@@ -27,6 +28,7 @@ namespace Units
         private void Start()
         {
             HealthBar = GetComponentInChildren<UnitHealthBar>();
+            HealthBar.OnLethalDamage = OnDeath;
             _powerModifiers = new Dictionary<UnitType, float>
             {
                 {UnitType.DAMAGE, 1f},
@@ -151,6 +153,15 @@ namespace Units
         public ActionType GetSpecialType()
         {
             return unitType == UnitType.DAMAGE ? ActionType.ATTACK : ActionType.SPECIAL;
+        }
+
+        private void OnDeath()
+        {
+            TileNode tile = LevelController.GetTileAtCoordinates(Coordinates);
+            tile.GetTileData().Vacate();
+            if (this is Enemy)
+                LevelController.GetEnemyList().Remove(this as Enemy);
+            Destroy(gameObject);
         }
     }
 }

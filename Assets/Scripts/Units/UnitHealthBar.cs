@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace Units
 {
@@ -7,6 +8,8 @@ namespace Units
         [SerializeField] private GameObject filler;
         private int _maxHP = 10;
         private int _currentHP = 10;
+
+        public Action OnLethalDamage;
 
         public int MaxHP()
         {
@@ -22,7 +25,8 @@ namespace Units
                 _currentHP = _maxHP;
             if (_currentHP <= 0)
             {
-                Destroy(transform.parent.gameObject);
+                OnLethalDamage();
+                return false;
             }
 
             float ratio = (float)_currentHP / _maxHP;

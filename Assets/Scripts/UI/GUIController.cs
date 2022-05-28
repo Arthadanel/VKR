@@ -88,7 +88,7 @@ namespace UI
         {
             messageDisplay.SetActive(true);
             messageDisplay.GetComponentInChildren<Text>().text = message;
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(TurnController.ENEMY_TURN_PAUSE);
             messageDisplay.SetActive(false);
         }
     }

@@ -5,74 +5,76 @@ using Tiles;
 using UI;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using Utility;
 
 namespace Units
 {
     public class Enemy:Unit
     {
         public static readonly int AI_DETECTION_RADIUS = SaveData.IS_DIFFICULT ? 10 : 7;
-        // private void OnMouseDown()
-        // {
-        //     if (EventSystem.current.IsPointerOverGameObject()) return;
-        //     
-        //     if(LevelController.IsUnitSelected)
-        //     {
-        //         GUIController.DeactivateHighlights();
-        //
-        //         // Unit selectedUnit = LevelController.GetSelectedUnit();
-        //         // if (selectedUnit.Coordinates.NextTo(_coordinates))
-        //         // {
-        //         //     selectedUnit.Fight(this);
-        //         // }
-        //     }
-        // }
 
         private List<TileNode> _tilesToClean = new List<TileNode>();
-        public void Act()
+        public string Act()
         {
             bool hasTarget;
+            string actionResult = "";
+            string scenarioResult = "";
             switch (specialAction)
             {
                 case "attack":
+                    actionResult += "Warrior at " + Coordinates + " ";
                     hasTarget = HasTargetScenario();
                     if (!hasTarget)
-                        WarriorScenario();
+                        scenarioResult = WarriorScenario();
+                    else
+                    {
+                        actionResult += "blindly charged at his target";
+                    }
                     break;
                 case "shoot":
+                    actionResult += "Archer at " + Coordinates + " ";
                     hasTarget = HasTargetScenario();
                     if (!hasTarget)
-                        ArcherScenario();
+                        scenarioResult =ArcherScenario();
+                    else
+                    {
+                        actionResult += "blindly charged at his target";
+                    }
                     break;
                 case "heal":
+                    actionResult += "Healer at " + Coordinates + " ";
                     hasTarget = HasTargetScenario();
                     if (!hasTarget)
-                        HealerScenario();
+                        scenarioResult =HealerScenario();
+                    else
+                    {
+                        actionResult += "blindly charged at his target";
+                    }
                     break;
                 case "taunt":
+                    actionResult += "Tank at " + Coordinates + " ";
                     hasTarget = HasTargetScenario();
                     if (!hasTarget)
-                        TankScenario();
+                        scenarioResult =TankScenario();
+                    else
+                    {
+                        actionResult += "blindly charged at his target";
+                    }
                     break;
             }
             CleanUp();
-        }
-
-        private void CleanUp()
-        {
-            SelectedAction = ActionType.NONE;
-            foreach (var tileNode in _tilesToClean)
+            if (scenarioResult == "")
             {
-                tileNode.GetTileData().TileInteractionCost = GameSettings.MOVE_LIMIT;
+                scenarioResult = "waited";
             }
-
-            _tilesToClean = new List<TileNode>();
+            actionResult += scenarioResult;
+            return actionResult;
         }
 
-        private void WarriorScenario()
+        private string WarriorScenario()
         {
-            TileNode start = LevelController.GetTileAtCoordinates(Coordinates);
             List<Tile> targets = DetectVisibleTargets();
-            if (targets.Count == 0) return;
+            if (targets.Count == 0) return "";
             
             Tile closest = targets[0];
             for (var i = 1; i < targets.Count; i++)
@@ -84,14 +86,16 @@ namespace Units
                 }
             }
 
-            PursueTarget(closest.GetCurrentUnit(), ActionType.ATTACK);
+            Unit finalTarget = closest.GetCurrentUnit();
+            Coordinates targetCoordinates = finalTarget.Coordinates;
+            bool targetInRange = PursueTarget(finalTarget, ActionType.ATTACK);
+            return (targetInRange ? " attacked " : " moved towards ") + "unit at " + targetCoordinates;
         }
 
-        private void ArcherScenario()
+        private string ArcherScenario()
         {
-            TileNode start = LevelController.GetTileAtCoordinates(Coordinates);
             List<Tile> targets = DetectVisibleTargets();
-            if (targets.Count == 0) return;
+            if (targets.Count == 0) return "";
             
             Tile weakest = targets[0];
             for (var i = 1; i < targets.Count; i++)
@@ -103,16 +107,16 @@ namespace Units
                     weakest = target;
                 }
             }
-
-            PursueTarget(weakest.GetCurrentUnit(),
-                weakest.TileInteractionCost <= GetMovement() + 1 ? ActionType.ATTACK : ActionType.SPECIAL);
+            Unit finalTarget = weakest.GetCurrentUnit();
+            Coordinates targetCoordinates = finalTarget.Coordinates;
+            bool targetInRange = PursueTarget(finalTarget, ActionType.SPECIAL);
+            return (targetInRange ? " attacked " : " moved towards ") + "unit at " + targetCoordinates;
         }
 
-        private void HealerScenario()
+        private string HealerScenario()
         {
-            TileNode start = LevelController.GetTileAtCoordinates(Coordinates);
             List<Tile> targets = DetectVisibleTargets(false);
-            if (targets.Count == 0) return;
+            if (targets.Count == 0) return "";
             
             
             Tile weakest = targets[0];
@@ -126,21 +130,23 @@ namespace Units
                 }
             }
 
-            if (weakest.GetCurrentUnit().HealthBar.GetCurrentHP() == weakest.GetCurrentUnit().HealthBar.MaxHP()) return;
+            if (weakest.GetCurrentUnit().HealthBar.GetCurrentHP() == weakest.GetCurrentUnit().HealthBar.MaxHP()) return "";
             
-            PursueTarget(weakest.GetCurrentUnit(), ActionType.SPECIAL);
+            Unit finalTarget = weakest.GetCurrentUnit();
+            Coordinates targetCoordinates = finalTarget.Coordinates;
+            bool targetInRange = PursueTarget(finalTarget, ActionType.SPECIAL);
+            return (targetInRange ? " healed " : " moved towards ") + "unit at " + targetCoordinates;
         }
 
-        private void TankScenario()
+        private string TankScenario()
         {
-            TileNode start = LevelController.GetTileAtCoordinates(Coordinates);
             List<Tile> targets = DetectVisibleTargets();
-            if (targets.Count == 0) return;
+            if (targets.Count == 0) return "";
             if (targets.Count > 5)
             {
                 //todo:taunt condition and trigger
                 //InteractWith(start.GetTileData());
-                return;
+                return "";
             }
             Tile closest = targets[0];
             Tile weakest = targets[0];
@@ -158,25 +164,23 @@ namespace Units
                 }
             }
 
+            Unit finalTarget = closest.GetCurrentUnit();
+
             if (weakest.TileInteractionCost <= closest.TileInteractionCost)
             {
-                PursueTarget(weakest.GetCurrentUnit(),ActionType.ATTACK);
-                return;
+                finalTarget = weakest.GetCurrentUnit();
             }
-
-            if (closest.GetCurrentUnit().HealthBar.MaxHP() <= weakest.GetCurrentUnit().HealthBar.MaxHP())
+            else if (closest.GetCurrentUnit().HealthBar.MaxHP() <= weakest.GetCurrentUnit().HealthBar.MaxHP())
             {
-                PursueTarget(closest.GetCurrentUnit(),ActionType.ATTACK);
-                return;
+                finalTarget = closest.GetCurrentUnit();
             }
-
-            if (weakest.TileInteractionCost < GetMovement())
+            else if (weakest.TileInteractionCost < GetMovement())
             {
-                PursueTarget(weakest.GetCurrentUnit(),ActionType.ATTACK);
-                return;
+                finalTarget = weakest.GetCurrentUnit();
             }
 
-            PursueTarget(closest.GetCurrentUnit(),ActionType.ATTACK);
+            bool targetInRange = PursueTarget(finalTarget,ActionType.ATTACK);
+            return (targetInRange ? " attacked " : " moved towards ") + "unit at " + closest.GetCurrentUnit().Coordinates;
         }
 
         private bool HasTargetScenario()
@@ -187,14 +191,33 @@ namespace Units
             return true;
         }
 
-        private void PursueTarget(Unit target, ActionType action)
+        private void CleanUp()
         {
+            SelectedAction = ActionType.NONE;
+            foreach (var tileNode in _tilesToClean)
+            {
+                tileNode.GetTileData().TileInteractionCost = GameSettings.MOVE_LIMIT;
+            }
+
+            _tilesToClean = new List<TileNode>();
+        }
+
+        private bool PursueTarget(Unit target, ActionType action)
+        {
+            CleanUp();
+            TileNode start = LevelController.GetTileAtCoordinates(Coordinates);
+            int targetRange = action == ActionType.ATTACK ? 1 : GetSpecialRange();
+            Debug.Log(action);
+            List<TileNode> reachableTiles = start.GetTilesInRange(targetRange,true);
+            _tilesToClean.AddRange(reachableTiles);
+            
             Tile tile = LevelController.GetTileAtCoordinates(target.Coordinates).GetTileData();
+            
             bool success = false;
             switch (action)
             {
                 case ActionType.ATTACK:
-                    if (tile.TileInteractionCost <= GetMovement() + 1)
+                    if (tile.TileInteractionCost <= 1)
                     {
                         SelectedAction = action;
                         InteractWith(tile);
@@ -202,7 +225,7 @@ namespace Units
                     }
                     break;
                 case ActionType.SPECIAL:
-                    if (tile.TileInteractionCost <= GetMovement() + GetSpecialRange())
+                    if (tile.TileInteractionCost <= GetSpecialRange())
                     {
                         SelectedAction = action;
                         InteractWith(tile);
@@ -211,20 +234,19 @@ namespace Units
                     break;
             }
 
-            if (success) return;
+            if (success) return true;
             MoveTowards(tile);
+            return false;
         }
 
         private void MoveTowards(Tile tile)
         {
             CleanUp();
-            int signX = (Coordinates.X - tile.Coordinates.X) > 0 ? -1 : 1;
-            int signY = (Coordinates.Y - tile.Coordinates.Y) > 0 ? -1 : 1;
-            Tile result;
             TileNode start = LevelController.GetTileAtCoordinates(Coordinates);
             List<TileNode> reachableTiles = start.GetTilesInRange(movement);
             _tilesToClean.AddRange(reachableTiles);
-            result = reachableTiles[0].GetTileData();
+            
+            var result = reachableTiles[0].GetTileData();
             for (var i = 1; i < reachableTiles.Count; i++)
             {
                 var tileNode = reachableTiles[i];
@@ -243,7 +265,7 @@ namespace Units
         {
             List<Tile> result = new List<Tile>();
             TileNode start = LevelController.GetTileAtCoordinates(Coordinates);
-            List<TileNode> reachableTiles = start.GetTilesInRange(AI_DETECTION_RADIUS);
+            List<TileNode> reachableTiles = start.GetTilesInRange(AI_DETECTION_RADIUS, true);
             _tilesToClean.AddRange(reachableTiles);
             foreach (var tile in reachableTiles)
             {

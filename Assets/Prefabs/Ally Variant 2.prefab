@@ -20,6 +20,10 @@ PrefabInstance:
       value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 3773320231232262374, guid: d39f81dc46274cb499cbde4ba24f9b8b, type: 3}
+      propertyPath: health
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 3773320231232262374, guid: d39f81dc46274cb499cbde4ba24f9b8b, type: 3}
       propertyPath: movement
       value: 2
       objectReference: {fileID: 0}

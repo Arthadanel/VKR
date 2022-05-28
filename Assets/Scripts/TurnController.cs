@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 public class TurnController:MonoBehaviour
 {
-    public const float ENEMY_TURN_PAUSE = 2f;
+    public const float ENEMY_TURN_PAUSE = 1.5f;
     public static readonly int ENEMY_MAX_ACTION_COUNT = SaveData.IS_DIFFICULT ? 3 : 2;
     [SerializeField] private Button passTurnButton;
     public bool IsPlayerTurn { get; private set; } = true;
@@ -36,7 +36,8 @@ public class TurnController:MonoBehaviour
         {
             for (int i = 0; i < ENEMY_MAX_ACTION_COUNT; i++)
             {
-                enemy.Act();
+                string action = enemy.Act();
+                LevelController.DisplayMessage(action);
                 yield return new WaitForSeconds(ENEMY_TURN_PAUSE);
             }
         }
