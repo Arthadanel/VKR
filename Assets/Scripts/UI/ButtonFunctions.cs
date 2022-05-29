@@ -47,6 +47,10 @@ namespace UI
 
         public void LoadScene(string sceneName)
         {
+            if (sceneName == "Menu")
+            {
+                SaveLoader.SaveFile(SaveDataStorage.SAVE_SLOT);
+            }
             SceneManager.LoadScene(sceneName);
         }
 

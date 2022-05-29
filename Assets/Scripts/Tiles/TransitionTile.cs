@@ -1,4 +1,6 @@
 ﻿using Data;
+using Level;
+using UnityEngine;
 using UnityEngine.EventSystems;
 using Utility;
 
@@ -26,9 +28,20 @@ namespace Tiles
             if (EventSystem.current.IsPointerOverGameObject()) return;
             if (LevelController.IsUnitSelected)
             {
-                bool canInteract = LevelController.GetSelectedUnit().Coordinates.NextTo(Coordinates);
-                if(canInteract)
-                    UnlockLevel();
+                if (SaveDataStorage.LEVEL_COMPLETION[SelectedLevelData.GetLevelPolygon().LevelNumber] == 0)
+                {
+                    LevelController.DisplayMessage("Transition locked, defeat all enemies first",true);
+                }
+                else
+                {
+                    bool canInteract = LevelController.GetSelectedUnit().Coordinates.NextTo(Coordinates);
+                    if(canInteract)
+                        UnlockLevel();
+                    else
+                    {
+                        LevelController.DisplayMessage("You must be near the door to open it",true);
+                    }
+                }
             }
         }
     }

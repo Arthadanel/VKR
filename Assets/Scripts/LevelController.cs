@@ -179,7 +179,7 @@ public static class LevelController
             if (!tile.GetTileData().IsOccupied) continue;
             Unit unit = tile.GetTileData().GetCurrentUnit();
             allyU = unit is Ally;
-            if(allyT!=allyU) continue;
+            if(allyT==allyU) continue;
             result = true;
             unit.Target = taunterUnit;
         }

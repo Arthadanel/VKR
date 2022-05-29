@@ -132,5 +132,10 @@ namespace Tiles
                 unit.InteractWith(this);
             }
         }
+
+        public void CallOnMouseDown()
+        {
+            OnMouseDown();
+        }
     }
 }

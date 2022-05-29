@@ -45,6 +45,10 @@ namespace Level
 
             LevelController.SetLevelLayout(_map);
             if (OnMapGenerationFinished != null) OnMapGenerationFinished();
+            if (_enemies.Count == 0)
+            {
+                LevelController.OnLevelCleared();
+            }
         }
 
         private void GenerateLevel()
@@ -108,8 +112,8 @@ namespace Level
             int ap = _layoutSize / (SaveDataStorage.IS_DIFFICULT
                 ? GameSettings.TILE_AP_PERCENTAGE_HARD
                 : GameSettings.TILE_AP_PERCENTAGE);
-            int maxAllies = ap / 3;
-            int maxEnemies = (int) (ap / 3 * (SaveDataStorage.IS_DIFFICULT
+            int maxAllies = 1 + ap / 3;
+            int maxEnemies = 1 + (int) (ap / 3 * (SaveDataStorage.IS_DIFFICULT
                 ? GameSettings.ENEMY_UNIT_MULTIPLIER_HARD
                 : GameSettings.ENEMY_UNIT_MULTIPLIER));
             int lengthX = _map.GetLength(0);

@@ -28,7 +28,7 @@ namespace Units
                 OnLethalDamage();
                 return false;
             }
-
+            
             float ratio = (float)_currentHP / _maxHP;
             filler.transform.localScale = new Vector3(ratio,1,1);
             return true;

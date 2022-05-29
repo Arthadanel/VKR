@@ -5,6 +5,7 @@ namespace Data
 {
     public static class SaveDataStorage
     {
+        public static int SAVE_SLOT;
         public static int SEED = 4283579; //4283579
         //gameplay settings
         public static bool IS_DIFFICULT = false;

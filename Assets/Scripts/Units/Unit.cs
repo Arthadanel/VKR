@@ -83,11 +83,12 @@ namespace Units
         public bool SpecialAction(Tile tile)
         {
             bool success = false;
-            switch (specialAction)
+            switch (GetSpecialName())
             {
                 case "heal":
                     if (!tile.IsOccupied) return false;
-                    success = tile.GetCurrentUnit().HealthBar.ChangeHP(+GetSpecialAttackPower());
+                    Unit unit = tile.GetCurrentUnit();
+                    success = unit.HealthBar.ChangeHP(+GetSpecialAttackPower());
                     break;
                 case "taunt":
                     success = LevelController.MassSetPriorityTarget(this);
@@ -144,7 +145,7 @@ namespace Units
                     actionCost = ATTACK_COST;
                     break;
                 case ActionType.SPECIAL:
-                    actionPerformed = unitType == UnitType.DAMAGE ? Fight(tile) : SpecialAction(tile);
+                    actionPerformed = (unitType == UnitType.DAMAGE) ? Fight(tile) : SpecialAction(tile);
                     actionCost = SPECIAL_COST;
                     break;
             }
