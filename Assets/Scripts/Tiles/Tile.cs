@@ -12,6 +12,7 @@ namespace Tiles
         [SerializeField] private bool isObstruction = false;
         [SerializeField] private int movementCost = 1;
         [SerializeField] private int attackHindrance = 0;
+        [SerializeField] private Sprite swapSprite;
     
         private Coordinates _coordinates;
         private GameObject _highlighter;
@@ -112,11 +113,23 @@ namespace Tiles
         {
             if (EventSystem.current.IsPointerOverGameObject()) return;
 
-            if(isObstruction) return;
+            Unit unit = LevelController.GetSelectedUnit();
+            if (_tileType == TileType.WOOD && unit.SelectedAction == ActionType.ATTACK)
+            {
+                _isObstruction = false;
+                _attackHindrance = 0;
+                _tileType = TileType.GRASS;
+                gameObject.GetComponent<SpriteRenderer>().sprite = swapSprite;
+                LevelController.ConsumeActionPoints(Unit.ATTACK_COST);
+                LevelController.DeactivateUnitSelection();
+                return;
+            }
+            
+            if(_isObstruction) return;
             if (LevelController.IsUnitSelected)
             {
                 if (_highlighter is null) return;
-                LevelController.GetSelectedUnit().InteractWith(this);
+                unit.InteractWith(this);
             }
         }
     }

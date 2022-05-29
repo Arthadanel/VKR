@@ -11,9 +11,9 @@ namespace Data
         public const int PADDING = 5;
         //MAP_NAV
         public const int MOVE_LIMIT = 64;
-        public const int TILE_AP_PERCENTAGE = 12; //20;
-        public const int TILE_AP_PERCENTAGE_HARD = 25; //33;
-        public const int ENEMY_UNIT_MULTIPLIER = 2;
-        public const int ENEMY_UNIT_MULTIPLIER_HARD = 3;
+        public const int TILE_AP_PERCENTAGE = 10; //20;
+        public const int TILE_AP_PERCENTAGE_HARD = 20; //33;
+        public const float ENEMY_UNIT_MULTIPLIER = 1.75f;
+        public const float ENEMY_UNIT_MULTIPLIER_HARD = 2.5f;
     }
 }

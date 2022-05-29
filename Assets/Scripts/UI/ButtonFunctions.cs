@@ -4,7 +4,6 @@ using Data;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using UnityEngine.UIElements;
 using Random = UnityEngine.Random;
 
 namespace UI
@@ -18,9 +17,14 @@ namespace UI
         [SerializeField] private Dropdown difficulty;
         [SerializeField] private Dropdown cameraControls;
 
+        [SerializeField] private Button quit;
+
         private void Start()
         {
             if(!isMainMenu) return;
+            #if (UNITY_WEBGL)
+            quit.gameObject.SetActive(false);
+            #endif
             InitSettings();
             InitSaveSlots();
         }
@@ -42,8 +46,9 @@ namespace UI
         {
             #if UNITY_EDITOR
             UnityEditor.EditorApplication.isPlaying = false;
-            #endif
+            #elif (UNITY_STANDALONE)
             Application.Quit();
+            #endif
         }
 
         public void LoadScene(string sceneName)

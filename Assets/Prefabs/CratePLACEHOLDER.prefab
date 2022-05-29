@@ -126,3 +126,4 @@ MonoBehaviour:
   isObstruction: 1
   movementCost: 1
   attackHindrance: 1
+  swapSprite: {fileID: 21300000, guid: 2602b0cb8feb0814294985bc834b71f9, type: 3}
