@@ -8,8 +8,8 @@ public class CameraController:MonoBehaviour
     [SerializeField] private float zoomSpeed = 2;
     [SerializeField] private float minCameraSize = GameSettings.ZOOM_MIN;
     [SerializeField] private float maxCameraSize = GameSettings.ZOOM_MAX;
-    [SerializeField] private bool mouseMove = SaveData.MOUSE_NAVIGATION_ENABLED;
-    [SerializeField] private bool keyboardMove = SaveData.KEYBOARD_NAVIGATION_ENABLED;
+    private bool _mouseMove = SaveData.MOUSE_NAVIGATION_ENABLED;
+    private bool _keyboardMove = SaveData.KEYBOARD_NAVIGATION_ENABLED;
 
     private Camera _camera;
     private readonly float _borderMargin = 0.025f;
@@ -31,8 +31,8 @@ public class CameraController:MonoBehaviour
 
     private void Update()
     {
-        if(mouseMove) MouseMove();
-        if (keyboardMove) KeyboardMove();
+        if(_mouseMove) MouseMove();
+        if (_keyboardMove) KeyboardMove();
         Zoom();
     }
 
