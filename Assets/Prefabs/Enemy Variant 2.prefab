@@ -9,7 +9,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -9178452022380725845, guid: 4748714866b4f134b9edaa4870bf82a9, type: 3}
       propertyPath: power
-      value: 6
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: -9178452022380725845, guid: 4748714866b4f134b9edaa4870bf82a9, type: 3}
       propertyPath: range

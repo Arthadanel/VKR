@@ -49,6 +49,7 @@ namespace UI
         public void SelectSaveSlot()
         {
             SaveLoader.LoadFile(saveSlot);
+            SaveDataStorage.SAVE_SLOT = saveSlot;
             SceneManager.LoadScene("Map");
         }
         

@@ -1,4 +1,5 @@
 ﻿using System;
+using Tiles;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -12,26 +13,23 @@ namespace Units
             
             if (LevelController.IsUnitSelected)
             {
-                LevelController.DeactivateUnitSelection();
+                Unit unit = LevelController.GetSelectedUnit();
+                if (unit == this)
+                    LevelController.DeactivateUnitSelection();
+                else
+                {
+                    if (unit.GetSpecialName() == "heal")
+                    {
+                        HealthBar.ChangeHP(unit.GetSpecialAttackPower());
+                        LevelController.ConsumeActionPoints(Unit.SPECIAL_COST);
+                        LevelController.DeactivateUnitSelection();
+                    }
+                }
             }
             else
             {
                 LevelController.ActivateUnitSelection(this);
             }
-            //=============
-            
-            // LevelMapControl.DeactivateMoveReachHighlight();
-            // if (LevelMapControl.IsUnitSelected)
-            // {
-            //     if (LevelMapControl.GetSelectedUnit().GetSpecialName() == "heal")
-            //     { 
-            //         HealthBar.ChangeHP(power);
-            //     }
-            // }
-            // else
-            // {
-            //     UnitNavigation.DisplayMovementArea(this);
-            // }
         }
     }
 }

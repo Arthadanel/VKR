@@ -21,7 +21,7 @@ namespace Map
         {
             //Generate anchor points
             List<Point> points = new List<Point>();
-            int pointCount = PointCount; //Random.Range(GameSettings.LEVEL_COUNT_MIN, GameSettings.LEVEL_COUNT_MAX + 1);
+            int pointCount = Random.Range(GameSettings.LEVEL_COUNT_MIN, GameSettings.LEVEL_COUNT_MAX + 1);
             int maxX = 0;
             int maxY = 0;
             for (int i = 0; i < pointCount; i++)

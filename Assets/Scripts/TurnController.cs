@@ -17,6 +17,7 @@ public class TurnController:MonoBehaviour
 
     public void SwitchTurn()
     {
+        if (enemyTurn != null) StopCoroutine(enemyTurn);
         IsPlayerTurn = !IsPlayerTurn;
         LevelController.PassTurn();
         passTurnButton.interactable = IsPlayerTurn;
