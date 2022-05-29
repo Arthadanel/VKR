@@ -24,6 +24,8 @@ namespace UI
 
         private static List<TileNode> _highlightedTiles;
 
+        public bool IsMessageVisible { get; private set; }
+
         private void Start()
         {
             _highlights= new Dictionary<ActionType, GameObject>
@@ -78,18 +80,39 @@ namespace UI
         }
 
         private Coroutine _messageCoroutine;
-        public void DisplayMessage(string message)
+        public void DisplayMessage(string message, bool isSystemMessage)
         {
             if (_messageCoroutine != null) StopCoroutine(_messageCoroutine);
-            _messageCoroutine = StartCoroutine(ShowMessage(message));
+            _messageCoroutine = StartCoroutine(ShowMessage(message, isSystemMessage));
         }
 
-        IEnumerator ShowMessage(string message)
+        IEnumerator ShowMessage(string message, bool isSystemMessage)
         {
             messageDisplay.SetActive(true);
+            IsMessageVisible = true;
             messageDisplay.GetComponentInChildren<Text>().text = message;
-            yield return new WaitForSeconds(TurnController.ENEMY_TURN_PAUSE);
+            yield return new WaitForSeconds(isSystemMessage
+                ? TurnController.SYSTEM_MESSAGE_PAUSE
+                : TurnController.ENEMY_TURN_PAUSE);
             messageDisplay.SetActive(false);
+            IsMessageVisible = false;
+        }
+
+        public void CallDoAfterSystemMessage(Action action,string message)
+        {
+            StartCoroutine(DoAfterSystemMessage(action,message));
+        }
+    
+        private IEnumerator DoAfterSystemMessage(Action action,string message)
+        {
+            if (_messageCoroutine != null) StopCoroutine(_messageCoroutine);
+            messageDisplay.SetActive(true);
+            IsMessageVisible = true;
+            messageDisplay.GetComponentInChildren<Text>().text = message;
+            yield return new WaitForSeconds(TurnController.SYSTEM_MESSAGE_PAUSE);
+            messageDisplay.SetActive(false);
+            IsMessageVisible = false;
+            action();
         }
     }
 }

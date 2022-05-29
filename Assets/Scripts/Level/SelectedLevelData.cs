@@ -10,6 +10,7 @@ namespace Level
         public static void SelectLevel(Polygon polygon)
         {
             _polygon = polygon;
+            LevelController.CURRENT_LEVEL = polygon.LevelNumber;
         }
 
         public static Polygon GetLevelPolygon()

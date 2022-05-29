@@ -22,8 +22,7 @@ namespace Level
         public static int BorderLayer = 0;
         public static int TileLayer = 1;
         public static int UnitLayer = -3;
-
-        public static int CURRENT_LEVEL = 1;
+        
         private TileNode[,] _map;
 
         public Action OnMapGenerationFinished;
@@ -37,6 +36,7 @@ namespace Level
         {
             //Pass actions
             LevelController.GetEnemyList = GetEnemyList;
+            LevelController.GetAllyList = GetAllyList;
         
             GenerateLevel();
             SpawnUnits();
@@ -221,6 +221,10 @@ namespace Level
         private List<Enemy> GetEnemyList()
         {
             return _enemies;
+        }
+        private List<Ally> GetAllyList()
+        {
+            return _allies;
         }
 
         public void SwitchBorderVisibility()

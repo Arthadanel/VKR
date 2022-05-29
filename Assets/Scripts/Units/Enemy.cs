@@ -207,7 +207,6 @@ namespace Units
             CleanUp();
             TileNode start = LevelController.GetTileAtCoordinates(Coordinates);
             int targetRange = action == ActionType.ATTACK ? 1 : GetSpecialRange();
-            Debug.Log(action);
             List<TileNode> reachableTiles = start.GetTilesInRange(targetRange,true);
             _tilesToClean.AddRange(reachableTiles);
             

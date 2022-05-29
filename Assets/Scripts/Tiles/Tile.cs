@@ -110,7 +110,6 @@ namespace Tiles
 
         private void OnMouseDown()
         {
-            Debug.Log(TileInteractionCost);
             if (EventSystem.current.IsPointerOverGameObject()) return;
 
             if(isObstruction) return;

@@ -29,6 +29,7 @@ namespace Units
         {
             HealthBar = GetComponentInChildren<UnitHealthBar>();
             HealthBar.OnLethalDamage = OnDeath;
+            HealthBar.SetMaxHealth(health);
             _powerModifiers = new Dictionary<UnitType, float>
             {
                 {UnitType.DAMAGE, 1f},
@@ -160,7 +161,23 @@ namespace Units
             TileNode tile = LevelController.GetTileAtCoordinates(Coordinates);
             tile.GetTileData().Vacate();
             if (this is Enemy)
-                LevelController.GetEnemyList().Remove(this as Enemy);
+            {
+                List<Enemy> listE = LevelController.GetEnemyList();
+                listE.Remove(this as Enemy);
+                if (listE.Count==0)
+                {
+                    LevelController.OnLevelCleared();
+                }
+            }
+            if (this is Ally)
+            {
+                List<Ally> listA = LevelController.GetAllyList();
+                listA.Remove(this as Ally);
+                if (listA.Count==0)
+                {
+                    LevelController.OnLoss();
+                }
+            }
             Destroy(gameObject);
         }
     }

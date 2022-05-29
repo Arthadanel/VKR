@@ -136,65 +136,13 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 6559947883535897826}
     m_Modifications:
-    - target: {fileID: 3079506036818698490, guid: f90217b1a3d98df4eaffd07d6753bedb, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 3079506036818698490, guid: f90217b1a3d98df4eaffd07d6753bedb, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3980964049131691859, guid: f90217b1a3d98df4eaffd07d6753bedb, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 3980964049131691859, guid: f90217b1a3d98df4eaffd07d6753bedb, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8336154506471111796, guid: f90217b1a3d98df4eaffd07d6753bedb, type: 3}
-      propertyPath: m_Color.b
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8336154506471111796, guid: f90217b1a3d98df4eaffd07d6753bedb, type: 3}
-      propertyPath: m_Color.g
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8336154506471111796, guid: f90217b1a3d98df4eaffd07d6753bedb, type: 3}
-      propertyPath: m_Color.r
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8336154506471111796, guid: f90217b1a3d98df4eaffd07d6753bedb, type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8336154506471111796, guid: f90217b1a3d98df4eaffd07d6753bedb, type: 3}
-      propertyPath: m_DrawMode
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8336154506471111796, guid: f90217b1a3d98df4eaffd07d6753bedb, type: 3}
-      propertyPath: m_SpriteSortPoint
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 8336154506471111798, guid: f90217b1a3d98df4eaffd07d6753bedb, type: 3}
       propertyPath: m_Name
       value: HealthBar
       objectReference: {fileID: 0}
-    - target: {fileID: 8336154506471111798, guid: f90217b1a3d98df4eaffd07d6753bedb, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 8336154506471111799, guid: f90217b1a3d98df4eaffd07d6753bedb, type: 3}
       propertyPath: m_RootOrder
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8336154506471111799, guid: f90217b1a3d98df4eaffd07d6753bedb, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8336154506471111799, guid: f90217b1a3d98df4eaffd07d6753bedb, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8336154506471111799, guid: f90217b1a3d98df4eaffd07d6753bedb, type: 3}
       propertyPath: m_LocalPosition.x
@@ -234,10 +182,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8336154506471111799, guid: f90217b1a3d98df4eaffd07d6753bedb, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8718330068060617865, guid: f90217b1a3d98df4eaffd07d6753bedb, type: 3}
-      propertyPath: m_DrawMode
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

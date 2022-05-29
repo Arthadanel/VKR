@@ -38,5 +38,11 @@ namespace Units
         {
             return _currentHP;
         }
+
+        public void SetMaxHealth(int health)
+        {
+            _maxHP = health;
+            _currentHP = _maxHP;
+        }
     }
 }

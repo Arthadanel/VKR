@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Data;
+using Level;
 using Tiles;
 using UI;
 using Units;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Utility;
 
 public static class LevelController
@@ -23,6 +26,9 @@ public static class LevelController
 
     public static Action OnTurnPass;
     public static Func<List<Enemy>> GetEnemyList;
+    public static Func<List<Ally>> GetAllyList;
+
+    public static int CURRENT_LEVEL;
 
     public static int ActionPoints
     {
@@ -36,9 +42,9 @@ public static class LevelController
             }
         }
     }
-    public static void DisplayMessage(string message)
+    public static void DisplayMessage(string message, bool isSystemMessage)
     {
-        _guiController.DisplayMessage(message);
+        _guiController.DisplayMessage(message, isSystemMessage);
     }
 
     //public static List<Enemy> Enemies { get; set; }
@@ -171,5 +177,22 @@ public static class LevelController
         }
 
         return result;
+    }
+
+    public static void OnLevelCleared()
+    {
+        DisplayMessage("You have defeated enemy forces, now you can try unlocking a door to a nearby area", true);
+        SaveData.LEVEL_COMPLETION[CURRENT_LEVEL]++;
+    }
+
+    public static void OnLoss()
+    {
+        _turnController.InterruptTurn();
+        _guiController.CallDoAfterSystemMessage(ExitToMap,"Your forces can no longer keep up, retreating");
+    }
+
+    private static void ExitToMap()
+    {
+        SceneManager.LoadScene("Map");
     }
 }

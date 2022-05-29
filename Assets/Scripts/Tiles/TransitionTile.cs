@@ -10,9 +10,9 @@ namespace Tiles
 
         private void UnlockLevel()
         {
-            bool newLevel = SaveData.OPEN_LEVELS.Add(ConnectedLevel);
+            bool newLevel = SaveData.AddOpenLevel(ConnectedLevel);
             if (newLevel)
-                LevelController.DisplayMessage("New area unlocked");
+                LevelController.DisplayMessage("New area unlocked",true);
         }
     
         public new void InitializeTilePrefab(Coordinates coordinates,int connectedLevel)
