@@ -20,7 +20,7 @@ namespace Map
 
         private void Start()
         {
-            _levelReached = SaveData.OPEN_LEVELS.Contains(_polygon.LevelNumber);
+            _levelReached = SaveDataStorage.OPEN_LEVELS.Contains(_polygon.LevelNumber);
             Mesh mesh = GetComponent<MeshFilter>().mesh;
             TextMeshPro textMesh = GetComponentInChildren<TextMeshPro>();
             textMesh.transform.position = textMesh.transform.TransformPoint(mesh.bounds.center);
@@ -31,7 +31,7 @@ namespace Map
             }
             else
             {
-                textMesh.text = "Times Completed: " + SaveData.LEVEL_COMPLETION[_polygon.LevelNumber];
+                textMesh.text = "Times Completed: " + SaveDataStorage.LEVEL_COMPLETION[_polygon.LevelNumber];
             }
         }
 

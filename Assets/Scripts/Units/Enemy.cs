@@ -11,7 +11,7 @@ namespace Units
 {
     public class Enemy:Unit
     {
-        public static readonly int AI_DETECTION_RADIUS = SaveData.IS_DIFFICULT ? 10 : 7;
+        public static readonly int AI_DETECTION_RADIUS = SaveDataStorage.IS_DIFFICULT ? 10 : 7;
         public string Act()
         {
             bool hasTarget;

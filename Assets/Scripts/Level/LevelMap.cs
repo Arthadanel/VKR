@@ -105,11 +105,11 @@ namespace Level
 
         private void SpawnUnits()
         {
-            int ap = _layoutSize / (SaveData.IS_DIFFICULT
+            int ap = _layoutSize / (SaveDataStorage.IS_DIFFICULT
                 ? GameSettings.TILE_AP_PERCENTAGE_HARD
                 : GameSettings.TILE_AP_PERCENTAGE);
             int maxAllies = ap / 3;
-            int maxEnemies = (int) (ap / 3 * (SaveData.IS_DIFFICULT
+            int maxEnemies = (int) (ap / 3 * (SaveDataStorage.IS_DIFFICULT
                 ? GameSettings.ENEMY_UNIT_MULTIPLIER_HARD
                 : GameSettings.ENEMY_UNIT_MULTIPLIER));
             int lengthX = _map.GetLength(0);

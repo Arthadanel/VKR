@@ -14,7 +14,7 @@ namespace Map
     
         private void Awake()
         {
-            Random.InitState(SaveData.SEED);
+            Random.InitState(SaveDataStorage.SEED);
         }
 
         private void Start()

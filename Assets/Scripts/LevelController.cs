@@ -115,7 +115,7 @@ public static class LevelController
     public static void SetTileCount(int tileCount)
     {
         _tileCount = tileCount;
-        MaxActionPoints = tileCount / (SaveData.IS_DIFFICULT ? GameSettings.TILE_AP_PERCENTAGE_HARD : GameSettings.TILE_AP_PERCENTAGE);
+        MaxActionPoints = tileCount / (SaveDataStorage.IS_DIFFICULT ? GameSettings.TILE_AP_PERCENTAGE_HARD : GameSettings.TILE_AP_PERCENTAGE);
         ActionPoints = MaxActionPoints;
         _guiController.UpdateActionPoints(ActionPoints);
     }
@@ -190,7 +190,7 @@ public static class LevelController
     public static void OnLevelCleared()
     {
         DisplayMessage("You have defeated enemy forces, now you can try unlocking a door to a nearby area", true);
-        SaveData.LEVEL_COMPLETION[CURRENT_LEVEL]++;
+        SaveDataStorage.LEVEL_COMPLETION[CURRENT_LEVEL]++;
     }
 
     public static void OnLoss()

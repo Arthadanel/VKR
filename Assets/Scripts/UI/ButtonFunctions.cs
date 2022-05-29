@@ -26,20 +26,14 @@ namespace UI
             quit.gameObject.SetActive(false);
             #endif
             InitSettings();
-            InitSaveSlots();
         }
 
         private void InitSettings()
         {
-            seed.text = SaveData.SEED.ToString();
-            difficulty.value = SaveData.IS_DIFFICULT ? 1 : 0;
+            seed.text = SaveDataStorage.SEED.ToString();
+            difficulty.value = SaveDataStorage.IS_DIFFICULT ? 1 : 0;
             cameraControls.value =
-                !SaveData.MOUSE_NAVIGATION_ENABLED ? 1 : !SaveData.KEYBOARD_NAVIGATION_ENABLED ? 2 : 0;
-        }
-
-        private void InitSaveSlots()
-        {
-            
+                !SaveDataStorage.MOUSE_NAVIGATION_ENABLED ? 1 : !SaveDataStorage.KEYBOARD_NAVIGATION_ENABLED ? 2 : 0;
         }
 
         public void Quit()
@@ -65,25 +59,6 @@ namespace UI
             panel.SetActive(true);
         }
 
-        public void CopySeedToClipboard(Text textField)
-        {
-            GUIUtility.systemCopyBuffer = textField.text.Substring(6);
-        }
-
-        public void DeleteSaveSlot(int slotIndex)
-        {
-            
-        }
-        public void CreateSaveSlot(int slotIndex)
-        {
-            
-        }
-
-        public void SelectSaveSlot(int slotIndex)
-        {
-            LoadScene("Map");
-        }
-
         public void Play(GameObject savePanel)
         {
             if (Application.platform == RuntimePlatform.WebGLPlayer)
@@ -98,7 +73,7 @@ namespace UI
 
         public void SelectDifficulty(Dropdown dropdown)
         {
-            SaveData.IS_DIFFICULT = dropdown.value == 1;
+            SaveDataStorage.IS_DIFFICULT = dropdown.value == 1;
         }
         
         public void SelectCameraControls(Dropdown dropdown)
@@ -106,16 +81,16 @@ namespace UI
             switch (dropdown.value)
             {
                 case 0:
-                    SaveData.KEYBOARD_NAVIGATION_ENABLED = true;
-                    SaveData.MOUSE_NAVIGATION_ENABLED = true;
+                    SaveDataStorage.KEYBOARD_NAVIGATION_ENABLED = true;
+                    SaveDataStorage.MOUSE_NAVIGATION_ENABLED = true;
                     break;
                 case 1:
-                    SaveData.KEYBOARD_NAVIGATION_ENABLED = true;
-                    SaveData.MOUSE_NAVIGATION_ENABLED = false;
+                    SaveDataStorage.KEYBOARD_NAVIGATION_ENABLED = true;
+                    SaveDataStorage.MOUSE_NAVIGATION_ENABLED = false;
                     break;
                 case 2:
-                    SaveData.KEYBOARD_NAVIGATION_ENABLED = false;
-                    SaveData.MOUSE_NAVIGATION_ENABLED = true;
+                    SaveDataStorage.KEYBOARD_NAVIGATION_ENABLED = false;
+                    SaveDataStorage.MOUSE_NAVIGATION_ENABLED = true;
                     break;
             }
         }
@@ -139,7 +114,7 @@ namespace UI
                 inputField.text = seed.ToString();
             }
 
-            SaveData.SEED = seed;
+            SaveDataStorage.SEED = seed;
         }
     }
 }

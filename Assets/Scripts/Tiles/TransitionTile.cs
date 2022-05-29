@@ -10,7 +10,7 @@ namespace Tiles
 
         private void UnlockLevel()
         {
-            bool newLevel = SaveData.AddOpenLevel(ConnectedLevel);
+            bool newLevel = SaveDataStorage.AddOpenLevel(ConnectedLevel);
             if (newLevel)
                 LevelController.DisplayMessage("New area unlocked",true);
         }

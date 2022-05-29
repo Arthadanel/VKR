@@ -10,7 +10,7 @@ public class TurnController:MonoBehaviour
 {
     public const float ENEMY_TURN_PAUSE = 1f;
     public const float SYSTEM_MESSAGE_PAUSE = 2f;
-    public static readonly int ENEMY_MAX_ACTION_COUNT = SaveData.IS_DIFFICULT ? 3 : 2;
+    public static readonly int ENEMY_MAX_ACTION_COUNT = SaveDataStorage.IS_DIFFICULT ? 3 : 2;
     [SerializeField] private Button passTurnButton;
     public bool IsPlayerTurn { get; private set; } = true;
     private Coroutine enemyTurn;

@@ -1,32 +1,26 @@
 ﻿using System.Collections.Generic;
-using UnityEngine;
 
 namespace Data
 {
-    public static class SaveData
+    [System.Serializable]
+    public class SaveData
     {
-        public static int SEED = 4283579; //4283579
-        //gameplay settings
-        public static bool IS_DIFFICULT = false;
-        public static bool MOUSE_NAVIGATION_ENABLED = true;
-        public static bool KEYBOARD_NAVIGATION_ENABLED = true;
-        //game progress
-        public static HashSet<int> OPEN_LEVELS = new HashSet<int>() {1};
-        public static List<int> LEVEL_COMPLETION = new List<int>() {0,0};
+        public int seed;
+        public bool isDifficult;
+        public List<int> openLevels;
+        public List<int> levelCompletion;
 
-        public static bool AddOpenLevel(int levelNum)
+        public SaveData(int seed, bool isDifficult, HashSet<int> openLevels, List<int> levelCompletion)
         {
-            bool levelAdded = OPEN_LEVELS.Add(levelNum);
-            if (levelAdded)
+            this.seed = seed;
+            this.isDifficult = isDifficult;
+            this.levelCompletion = levelCompletion;
+            List<int> openLevelsSet = new List<int>();
+            foreach (var level in openLevels)
             {
-                Debug.Log(LEVEL_COMPLETION.Count);
-                while (levelNum > LEVEL_COMPLETION.Count - 1)
-                {
-                    LEVEL_COMPLETION.Add(0);
-                }
+                openLevelsSet.Add(level);
             }
-
-            return levelAdded;
+            this.openLevels = openLevelsSet;
         }
     }
 }

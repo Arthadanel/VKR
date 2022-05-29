@@ -183,7 +183,7 @@ namespace Map
         private static void Start()
         {
             List<Point> points = new List<Point>();
-            Random.InitState(SaveData.SEED);
+            Random.InitState(SaveDataStorage.SEED);
             int pointCount = Random.Range(GameSettings.LEVEL_COUNT_MIN, GameSettings.LEVEL_COUNT_MAX + 1);
             for (int i = 0; i < pointCount; i++)
             {
