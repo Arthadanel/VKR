@@ -56,6 +56,17 @@ namespace UI
         {
             LoadScene("Map");
         }
-        
+
+        public void Play(GameObject savePanel)
+        {
+            if (Application.platform == RuntimePlatform.WebGLPlayer)
+            {
+                LoadScene("Map");
+            }
+            else
+            {
+                DisplayPanel(savePanel);
+            }
+        }
     }
 }

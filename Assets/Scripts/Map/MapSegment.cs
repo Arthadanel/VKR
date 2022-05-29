@@ -1,6 +1,8 @@
 ﻿using Data;
 using Level;
+using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using Utility;
 
@@ -20,14 +22,22 @@ namespace Map
         {
             _levelReached = SaveData.OPEN_LEVELS.Contains(_polygon.LevelNumber);
             Mesh mesh = GetComponent<MeshFilter>().mesh;
+            TextMeshPro textMesh = GetComponentInChildren<TextMeshPro>();
+            textMesh.transform.position = textMesh.transform.TransformPoint(mesh.bounds.center);
+            
             if (!_levelReached)
             {
                 WorldMapVisualisation.SetMeshColor(Color.gray, mesh);
+            }
+            else
+            {
+                textMesh.text = "Times Completed: " + SaveData.LEVEL_COMPLETION[_polygon.LevelNumber];
             }
         }
 
         private void OnMouseDown()
         {
+            if (EventSystem.current.IsPointerOverGameObject()) return;
             if (!_levelReached) return;
             SelectedLevelData.SelectLevel(_polygon);
             SceneManager.LoadScene("Level");

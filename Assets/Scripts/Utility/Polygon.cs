@@ -70,6 +70,11 @@ namespace Utility
             return convexHull;
         }
 
+        // public Vector3 GetCenterCoords()
+        // {
+        //     
+        // }
+
         public override string ToString()
         {
             return Anchor.ToString() + "|" + Edges.Count;
