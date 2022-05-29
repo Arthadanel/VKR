@@ -21,7 +21,7 @@ namespace Data
             file.Close();
         }
 
-        public static void LoadFile(int saveSlot)
+        public static bool LoadFile(int saveSlot)
         {
             string destination = Application.persistentDataPath + "/save" + saveSlot + ".dat";
             FileStream file;
@@ -30,7 +30,7 @@ namespace Data
             else
             {
                 Debug.LogError("File not found");
-                return;
+                return false;
             }
 
             BinaryFormatter bf = new BinaryFormatter();
@@ -41,6 +41,8 @@ namespace Data
             SaveDataStorage.IS_DIFFICULT = data.isDifficult;
             SaveDataStorage.OPEN_LEVELS = new HashSet<int>(data.openLevels);
             SaveDataStorage.LEVEL_COMPLETION = data.levelCompletion;
+
+            return true;
         }
 
         public static void DeleteFile(int saveSlot)
