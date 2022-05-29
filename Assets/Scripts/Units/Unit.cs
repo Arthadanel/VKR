@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Data;
 using Tiles;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -24,6 +25,8 @@ namespace Units
         public ActionType SelectedAction { get; set; }
         public Unit Target { get; set; }
         public int MovePenalty { get; private set; } = 0;
+
+        protected List<TileNode> _tilesToClean = new List<TileNode>();
 
         private void Start()
         {
@@ -98,6 +101,15 @@ namespace Units
             _coordinates = new Coordinates(row, column);
         }
 
+        public void RespondToTaunts()
+        {
+            if (Target != null)
+            {
+                PursueTarget(Target, ActionType.ATTACK);
+                Target = null;
+            }
+        }
+
         public bool Fight(Tile tile)
         {
             if (!tile.IsOccupied) return false;
@@ -142,6 +154,75 @@ namespace Units
                 LevelController.ConsumeActionPoints(actionCost);
                 LevelController.DeactivateUnitSelection();
             }
+        }
+
+        protected bool PursueTarget(Unit target, ActionType action)
+        {
+            CleanUp();
+            TileNode start = LevelController.GetTileAtCoordinates(Coordinates);
+            int targetRange = action == ActionType.ATTACK ? 1 : GetSpecialRange();
+            List<TileNode> reachableTiles = start.GetTilesInRange(targetRange,true);
+            _tilesToClean.AddRange(reachableTiles);
+            
+            Tile tile = LevelController.GetTileAtCoordinates(target.Coordinates).GetTileData();
+            
+            bool success = false;
+            switch (action)
+            {
+                case ActionType.ATTACK:
+                    if (tile.TileInteractionCost <= 1)
+                    {
+                        SelectedAction = action;
+                        InteractWith(tile);
+                        success = true;
+                    }
+                    break;
+                case ActionType.SPECIAL:
+                    if (tile.TileInteractionCost <= GetSpecialRange())
+                    {
+                        SelectedAction = action;
+                        InteractWith(tile);
+                        success = true;
+                    }
+                    break;
+            }
+
+            if (success) return true;
+            MoveTowards(tile);
+            return false;
+        }
+
+        private void MoveTowards(Tile tile)
+        {
+            CleanUp();
+            TileNode start = LevelController.GetTileAtCoordinates(Coordinates);
+            List<TileNode> reachableTiles = start.GetTilesInRange(movement);
+            _tilesToClean.AddRange(reachableTiles);
+            
+            var result = reachableTiles[0].GetTileData();
+            for (var i = 1; i < reachableTiles.Count; i++)
+            {
+                var tileNode = reachableTiles[i];
+                if (tileNode.GetTileData().Coordinates.Distance(tile.Coordinates) < result.Coordinates.Distance(tile.Coordinates))
+                {
+                    result = tileNode.GetTileData();
+                }
+            }
+
+            if (result is null) return;
+            SelectedAction = ActionType.MOVE;
+            InteractWith(result);
+        }
+
+        protected void CleanUp()
+        {
+            SelectedAction = ActionType.NONE;
+            foreach (var tileNode in _tilesToClean)
+            {
+                tileNode.GetTileData().TileInteractionCost = GameSettings.MOVE_LIMIT;
+            }
+
+            _tilesToClean = new List<TileNode>();
         }
 
         private void OnMouseEnter()

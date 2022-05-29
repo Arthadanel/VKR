@@ -12,8 +12,6 @@ namespace Units
     public class Enemy:Unit
     {
         public static readonly int AI_DETECTION_RADIUS = SaveData.IS_DIFFICULT ? 10 : 7;
-
-        private List<TileNode> _tilesToClean = new List<TileNode>();
         public string Act()
         {
             bool hasTarget;
@@ -89,7 +87,7 @@ namespace Units
             Unit finalTarget = closest.GetCurrentUnit();
             Coordinates targetCoordinates = finalTarget.Coordinates;
             bool targetInRange = PursueTarget(finalTarget, ActionType.ATTACK);
-            return (targetInRange ? " attacked " : " moved towards ") + "unit at " + targetCoordinates;
+            return (targetInRange ? "attacked " : "moved towards ") + "unit at " + targetCoordinates;
         }
 
         private string ArcherScenario()
@@ -110,7 +108,7 @@ namespace Units
             Unit finalTarget = weakest.GetCurrentUnit();
             Coordinates targetCoordinates = finalTarget.Coordinates;
             bool targetInRange = PursueTarget(finalTarget, ActionType.SPECIAL);
-            return (targetInRange ? " attacked " : " moved towards ") + "unit at " + targetCoordinates;
+            return (targetInRange ? "attacked " : "moved towards ") + "unit at " + targetCoordinates;
         }
 
         private string HealerScenario()
@@ -135,7 +133,7 @@ namespace Units
             Unit finalTarget = weakest.GetCurrentUnit();
             Coordinates targetCoordinates = finalTarget.Coordinates;
             bool targetInRange = PursueTarget(finalTarget, ActionType.SPECIAL);
-            return (targetInRange ? " healed " : " moved towards ") + "unit at " + targetCoordinates;
+            return (targetInRange ? "healed " : "moved towards ") + "unit at " + targetCoordinates;
         }
 
         private string TankScenario()
@@ -144,9 +142,9 @@ namespace Units
             if (targets.Count == 0) return "";
             if (targets.Count > 5)
             {
-                //todo:taunt condition and trigger
-                //InteractWith(start.GetTileData());
-                return "";
+                SelectedAction = ActionType.SPECIAL;
+                InteractWith(null);
+                return "taunted";
             }
             Tile closest = targets[0];
             Tile weakest = targets[0];
@@ -180,7 +178,7 @@ namespace Units
             }
 
             bool targetInRange = PursueTarget(finalTarget,ActionType.ATTACK);
-            return (targetInRange ? " attacked " : " moved towards ") + "unit at " + closest.GetCurrentUnit().Coordinates;
+            return (targetInRange ? "attacked " : "moved towards ") + "unit at " + closest.GetCurrentUnit().Coordinates;
         }
 
         private bool HasTargetScenario()
@@ -189,75 +187,6 @@ namespace Units
             PursueTarget(Target, ActionType.ATTACK);
             Target = null;
             return true;
-        }
-
-        private void CleanUp()
-        {
-            SelectedAction = ActionType.NONE;
-            foreach (var tileNode in _tilesToClean)
-            {
-                tileNode.GetTileData().TileInteractionCost = GameSettings.MOVE_LIMIT;
-            }
-
-            _tilesToClean = new List<TileNode>();
-        }
-
-        private bool PursueTarget(Unit target, ActionType action)
-        {
-            CleanUp();
-            TileNode start = LevelController.GetTileAtCoordinates(Coordinates);
-            int targetRange = action == ActionType.ATTACK ? 1 : GetSpecialRange();
-            List<TileNode> reachableTiles = start.GetTilesInRange(targetRange,true);
-            _tilesToClean.AddRange(reachableTiles);
-            
-            Tile tile = LevelController.GetTileAtCoordinates(target.Coordinates).GetTileData();
-            
-            bool success = false;
-            switch (action)
-            {
-                case ActionType.ATTACK:
-                    if (tile.TileInteractionCost <= 1)
-                    {
-                        SelectedAction = action;
-                        InteractWith(tile);
-                        success = true;
-                    }
-                    break;
-                case ActionType.SPECIAL:
-                    if (tile.TileInteractionCost <= GetSpecialRange())
-                    {
-                        SelectedAction = action;
-                        InteractWith(tile);
-                        success = true;
-                    }
-                    break;
-            }
-
-            if (success) return true;
-            MoveTowards(tile);
-            return false;
-        }
-
-        private void MoveTowards(Tile tile)
-        {
-            CleanUp();
-            TileNode start = LevelController.GetTileAtCoordinates(Coordinates);
-            List<TileNode> reachableTiles = start.GetTilesInRange(movement);
-            _tilesToClean.AddRange(reachableTiles);
-            
-            var result = reachableTiles[0].GetTileData();
-            for (var i = 1; i < reachableTiles.Count; i++)
-            {
-                var tileNode = reachableTiles[i];
-                if (tileNode.GetTileData().Coordinates.Distance(tile.Coordinates) < result.Coordinates.Distance(tile.Coordinates))
-                {
-                    result = tileNode.GetTileData();
-                }
-            }
-
-            if (result is null) return;
-            SelectedAction = ActionType.MOVE;
-            InteractWith(result);
         }
 
         private List<Tile> DetectVisibleTargets(bool detectPlayerUnits = true)

@@ -57,6 +57,14 @@ public static class LevelController
         AllowGameInput(_turnController.IsPlayerTurn);
         if (OnTurnPass != null) OnTurnPass();
         OnTurnPass = () => { };
+        if (_turnController.IsPlayerTurn)
+        {
+            List<Ally> allies = GetAllyList();
+            foreach (var ally in allies)
+            {
+                ally.RespondToTaunts();
+            }
+        }
     }
 
     private static void AllowGameInput(bool allow)
@@ -163,7 +171,7 @@ public static class LevelController
     {
         bool result = false;
         TileNode start = GetTileAtCoordinates(taunterUnit.Coordinates);
-        List<TileNode> reachableTiles = start.GetTilesInRange(taunterUnit.GetSpecialRange());
+        List<TileNode> reachableTiles = start.GetTilesInRange(taunterUnit.GetSpecialRange(),true);
         bool allyT = taunterUnit is Ally;
         bool allyU;
         foreach (var tile in reachableTiles)
