@@ -134,8 +134,7 @@ namespace Level
                             _allies.Add(SpawnUnit(tile,allies[Random.Range(0,allies.Count)]) as Ally);
                         }
                     }
-
-                    if (_allies.Count > maxAllies / 2 && _enemies.Count < maxEnemies)
+                    else if (_allies.Count > maxAllies / 2 && _enemies.Count < maxEnemies)
                     {
                         int check = Random.Range(0, chanceThreshold + chanceE--);
                         if (check <= chanceThreshold * GameSettings.ENEMY_UNIT_MULTIPLIER)
